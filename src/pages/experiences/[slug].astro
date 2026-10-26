@@ -4,7 +4,6 @@ import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import Filmstrip from '../../components/Filmstrip.astro';
-import EnquiryForm from '../../components/EnquiryForm.astro';
 import Icon from '../../components/Icon.astro';
 import { experiences, site } from '../../data/site';
 import { img } from '../../lib/images';
@@ -17,14 +16,8 @@ const { xp } = Astro.props;
 const index = experiences.indexOf(xp);
 const next = experiences[(index + 1) % experiences.length];
 const after = experiences[(index + 2) % experiences.length];
-const reserveCopy = {
-  spa: { title: 'Book a treatment', label: 'Request appointment' },
-  event: null,
-  dining: null,
-  none: null,
-}[xp.reserve];
-// Dining and events have no online form: guests call instead.
-const callLabel = { dining: 'Call to reserve a table', event: 'Call to plan your event' }[xp.reserve as 'dining' | 'event'];
+// No online forms on experience pages: guests call to reserve, book or plan.
+const callLabel = { dining: 'Call to reserve a table', spa: 'Call to book a treatment', event: 'Call to plan your event', none: null }[xp.reserve];
 ---
 <Base title={xp.name} description={xp.intro}>
   <PageHero image={img(xp.hero)} eyebrow={xp.kind} title={xp.name} subtitle={xp.tagline} />
@@ -52,7 +45,6 @@ const callLabel = { dining: 'Call to reserve a table', event: 'Call to plan your
           <Icon name="phone" />
           <div><span class="label">Enquiries</span><a href={site.phoneHref}>{site.phone}</a></div>
         </div>
-        {reserveCopy && <a class="btn btn--block" href="#reserve">{reserveCopy.title}</a>}
         {callLabel && <a class="btn btn--block" href={site.phoneHref}>{callLabel}</a>}
       </aside>
     </div>
@@ -60,21 +52,6 @@ const callLabel = { dining: 'Call to reserve a table', event: 'Call to plan your
 
   {xp.images.length > 1 && (
     <Filmstrip images={xp.images} caption={xp.name} title={`Inside ${xp.name}`} id={xp.slug === 'artisans-table' ? 'menu' : undefined} />
-  )}
-
-  {reserveCopy && (
-    <section class="section" id="reserve">
-      <div class="container container--narrow">
-        <div class="center reveal">
-          <span class="eyebrow eyebrow--center">Reservations</span>
-          <h2>{reserveCopy.title}</h2>
-          <p class="lead">Send us your preferred date and time and our team will confirm by email or phone.</p>
-        </div>
-        <div class="reveal formwrap">
-          <EnquiryForm kind="spa" venue={xp.name} submitLabel={reserveCopy.label} />
-        </div>
-      </div>
-    </section>
   )}
 
   <nav class="pn" aria-label="More experiences">
@@ -102,7 +79,6 @@ const callLabel = { dining: 'Call to reserve a table', event: 'Call to plan your
   .info__row :global(svg) { color: var(--gold); flex: none; }
   .info__row .label { display: block; margin-bottom: 2px; }
   .info__row strong, .info__row a { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-detail); color: var(--ink); }
-  .formwrap { margin-top: 48px; background: var(--white); border: 1px solid var(--stone); padding: clamp(24px, 5vw, 56px); }
 
   /* Previous / next experience: two photo halves. */
   .pn { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--ink); }
