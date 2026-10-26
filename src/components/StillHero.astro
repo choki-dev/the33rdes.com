@@ -1,0 +1,38 @@
+---
+// Full-screen, text-free photograph that opens an editorial page; the page title sits in the band below.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+}
+const { image, alt } = Astro.props;
+---
+<section class="still">
+  <Image src={image} alt={alt} widths={[800, 1400, 2000, 2600]} sizes="100vw" loading="eager" fetchpriority="high" />
+  <span class="still__scroll" aria-hidden="true"></span>
+</section>
+
+<style>
+  .still { position: relative; height: 105svh; min-height: 520px; overflow: hidden; background: var(--ink); }
+  .still :global(img) { width: 100%; height: 100%; object-fit: cover; animation: still-zoom 16s var(--ease-out) both; }
+  /* Light shade at the top only, so the overlay header stays legible without dimming the photograph. */
+  .still::after {
+    content: ''; position: absolute; inset: 0 0 auto; height: 220px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(18, 17, 15, .55), rgba(18, 17, 15, 0));
+  }
+  .still__scroll {
+    position: absolute; left: 50%; bottom: 0; z-index: 1; width: 1px; height: 90px;
+    background: rgba(250, 247, 241, .3); overflow: hidden;
+  }
+  .still__scroll::after {
+    content: ''; position: absolute; inset: 0; background: var(--ivory);
+    animation: still-line 2.4s var(--ease) infinite;
+  }
+  @keyframes still-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+  @keyframes still-line { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+  @media (prefers-reduced-motion: reduce) {
+    .still :global(img), .still__scroll::after { animation: none; }
+  }
+</style>

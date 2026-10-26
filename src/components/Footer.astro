@@ -1,0 +1,104 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logoDark from '../assets/logo-dark.png';
+import zheygo from '../assets/zheygo.png';
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+const links = [
+  { label: 'Overview', href: '/' },
+  { label: 'Destination', href: '/destination' },
+  { label: 'Accommodation', href: '/rooms' },
+  { label: 'Dining', href: '/experiences/artisans-table' },
+  { label: 'Spa', href: '/experiences/om-spa' },
+  { label: 'Meeting & Events', href: '/experiences/the-boardroom' },
+  { label: 'Travel Guide', href: '/travel-guide' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'Get in Touch', href: '/contact' },
+];
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__main">
+      <a href="/" class="footer__logo" aria-label={`${site.name} — home`}>
+        <Image src={logoDark} alt={site.name} width={320} />
+      </a>
+      <nav class="footer__nav" aria-label="Footer">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      </nav>
+    </div>
+
+    <span class="footer__rule" aria-hidden="true"></span>
+
+    <address class="footer__contact">
+      <a href={site.mapUrl} target="_blank" rel="noopener"><Icon name="pin" size={15} />{site.address.full}</a>
+      <a href={site.phoneHref}><Icon name="phone" size={15} />{site.phone}</a>
+      <a href={`mailto:${site.email}`}><Icon name="mail" size={15} />{site.email}</a>
+    </address>
+
+    <div class="footer__social">
+      <a href={site.social.facebook} target="_blank" rel="noopener" aria-label="Facebook"><Icon name="facebook" size={18} /></a>
+      <a href={site.social.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" size={18} /></a>
+      <a href={site.social.tiktok} target="_blank" rel="noopener" aria-label="TikTok"><Icon name="tiktok" size={18} /></a>
+      <a href={site.whatsappHref} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" size={18} /></a>
+    </div>
+
+    <div class="footer__app">
+      <span>Available on</span>
+      <Image src={zheygo} alt="ZheyGo" width={240} />
+    </div>
+
+    <div class="footer__bottom">
+      <span>© {year} {site.name}. All rights reserved.</span>
+      <span>Website Designed and Developed by <a href="https://abit.bt" target="_blank" rel="noopener">aBit Private Limited</a></span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--sand); color: var(--muted); font-size: .84rem; border-top: 1px solid var(--stone); text-align: center; }
+  .footer a { transition: color .3s; }
+  .footer a:hover { color: var(--gold-deep); }
+
+  /* One centred column: logo, links, rule, contact, social, then the bottom bar. */
+  .footer__main { display: flex; flex-direction: column; align-items: center; gap: 28px; padding-top: clamp(48px, 6vw, 72px); }
+  .footer__logo :global(img) { width: 140px; height: auto; }
+  .footer__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 32px; max-width: 900px; }
+  .footer__nav a { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); }
+
+  .footer__rule { display: block; width: 56px; height: 1px; margin: clamp(32px, 4vw, 44px) auto; background: var(--gold); }
+
+  .footer__contact {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 36px;
+    font-style: normal; color: var(--charcoal);
+  }
+  .footer__contact a { display: inline-flex; align-items: center; gap: 10px; }
+  .footer__contact :global(svg) { color: var(--gold); flex: none; }
+
+  .footer__social { display: flex; justify-content: center; gap: 12px; margin: 28px 0 0; }
+  .footer__social a {
+    width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%;
+    border: 1px solid var(--gold-soft); color: var(--gold-deep);
+    transition: background .3s, color .3s, border-color .3s;
+  }
+  .footer__social a:hover { background: var(--gold); border-color: var(--gold); color: var(--white); }
+
+  .footer__app { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 28px 0 clamp(40px, 5vw, 56px); }
+  .footer__app span { font-size: .64rem; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+  .footer__app :global(img) { width: 96px; height: auto; }
+
+  .footer__bottom {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
+    padding-block: 18px; border-top: 1px solid var(--stone); font-size: .72rem; letter-spacing: .04em;
+  }
+  .footer__bottom a { color: var(--gold-deep); }
+
+  @media (max-width: 860px) {
+    .footer__contact { flex-direction: column; align-items: center; }
+    .footer__bottom { flex-direction: column; align-items: center; }
+  }
+  @media (max-width: 600px) {
+    .footer { padding-bottom: 60px; }
+    .footer__nav { gap: 10px 22px; }
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base title="Contact" description={`Contact The 33rd Executive Suites, ${site.address.full}. Call ${site.phone} or email ${site.email}.`}>
+  <PageHero image={img('valley-1')} eyebrow="Get in touch" title="We look forward to <em>welcoming you</em>" short />
+
+  <section class="section">
+    <div class="container contact">
+      <div class="reveal">
+        <span class="eyebrow">Reservations &amp; enquiries</span>
+        <h2>Contact <em>us</em></h2>
+        <ul class="channels">
+          <li><Icon name="phone" /><div><span class="label">Call</span><a href={site.phoneHref}>{site.phone}</a></div></li>
+          <li><Icon name="whatsapp" /><div><span class="label">WhatsApp</span><a href={site.whatsappHref} target="_blank" rel="noopener">{site.phone}</a></div></li>
+          <li><Icon name="mail" /><div><span class="label">Email</span><a href={`mailto:${site.email}`}>{site.email}</a></div></li>
+          <li><Icon name="pin" /><div><span class="label">Address</span><a href={site.mapUrl} target="_blank" rel="noopener">{site.address.full}</a></div></li>
+          <li><Icon name="clock" /><div><span class="label">Check-in / out</span><span>{site.checkIn} / {site.checkOut}</span></div></li>
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-1 formwrap">
+        <h3>Send us a message</h3>
+        <EnquiryForm kind="general" submitLabel="Send message" />
+      </div>
+    </div>
+  </section>
+
+  <section class="map" id="map" aria-label="Map">
+    <iframe src={site.mapEmbed} title="Map showing The 33rd Executive Suites" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+</Base>
+
+<style>
+  .contact { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(40px, 7vw, 110px); align-items: start; }
+  .channels { list-style: none; padding: 0; margin: 32px 0 0; display: grid; }
+  .channels li { display: flex; gap: 18px; padding: 22px 0; border-bottom: 1px solid var(--stone); }
+  .channels :global(svg) { color: var(--gold); flex: none; margin-top: 4px; }
+  .channels .label { display: block; margin-bottom: 4px; }
+  .channels a, .channels span:not(.label) { font-family: var(--font-display); font-size: var(--fs-detail); color: var(--ink); overflow-wrap: anywhere; transition: color .3s; }
+  .channels a:hover { color: var(--gold-deep); }
+  .formwrap { background: var(--white); border: 1px solid var(--stone); padding: clamp(24px, 5vw, 56px); }
+  .formwrap h3 { margin-bottom: 28px; }
+  .map iframe { display: block; width: 100%; height: 480px; border: 0; filter: grayscale(.6) sepia(.15); }
+  @media (max-width: 900px) { .contact { grid-template-columns: 1fr; } }
+</style>

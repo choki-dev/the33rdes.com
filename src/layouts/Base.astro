@@ -1,0 +1,100 @@
+---
+import '@fontsource-variable/eb-garamond/wght.css';
+import '@fontsource/montserrat/300.css';
+import '@fontsource/montserrat/400.css';
+import '@fontsource/montserrat/500.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBookBar from '../components/MobileBookBar.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** Header starts transparent over a dark hero. */
+  overlayHeader?: boolean;
+}
+const { title, description = site.description, image = '/video/hero-poster.jpg', overlayHeader = true } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — Luxury Boutique Hotel in Thimphu, Bhutan`;
+const canonical = new URL(Astro.url.pathname, site.url).toString();
+const ogImage = new URL(image, site.url).toString();
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Hotel',
+  name: site.name,
+  description: site.description,
+  url: site.url,
+  telephone: site.phone,
+  email: site.email,
+  image: ogImage,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    postalCode: site.address.postalCode,
+    addressCountry: 'BT',
+  },
+  checkinTime: '14:00',
+  checkoutTime: '12:00',
+  numberOfRooms: 68,
+  amenityFeature: ['Spa', 'Rooftop bar', 'Restaurant', 'Fitness centre', 'Free Wi-Fi', 'Free parking', 'Meeting room'].map((name) => ({
+    '@type': 'LocationFeatureSpecification',
+    name,
+    value: true,
+  })),
+  sameAs: Object.values(site.social),
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <!-- ?v= busts icons cached from other sites previously served on the same host -->
+    <link rel="icon" href="/favicon.ico?v=33rd" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=33rd" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?v=33rd" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=33rd" />
+    <meta name="theme-color" content="#1d1c1a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header overlay={overlayHeader} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <MobileBookBar />
+    <WhatsAppFloat />
+    <script>
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-visible');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

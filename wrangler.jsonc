@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "the33rdes",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "vars": {
+    // Where booking & enquiry notifications are sent.
+    "RESERVATIONS_EMAIL": "choki@abit.bt",
+    // Sender on Resend (https://resend.com). onboarding@resend.dev works straight away but only delivers
+    // to the Resend account's own address; verify the33rdes.com on Resend, then switch to
+    // "The 33rd Executive Suites <reservations@the33rdes.com>" so guests receive their copy too.
+    // Set the API key with:  npx wrangler secret put RESEND_API_KEY   (locally: RESEND_API_KEY=… in .dev.vars)
+    "MAIL_FROM": "The 33rd Executive Suites <onboarding@resend.dev>"
+  }
+  // To store bookings in a database, create a D1 database and uncomment:
+  //   npx wrangler d1 create the33rdes
+  //   npx wrangler d1 migrations apply the33rdes --remote
+  // "d1_databases": [
+  //   { "binding": "DB", "database_name": "the33rdes", "database_id": "<paste id>" }
+  // ]
+}

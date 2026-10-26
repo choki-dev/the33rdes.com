@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import StillHero from '../components/StillHero.astro';
+import { stats } from '../data/site';
+import { img } from '../lib/images';
+
+const pillars = [
+  { label: 'We nourish', title: 'Conscious cuisine', text: 'One of the few hotels in Bhutan offering pure vegetarian cuisine — gourmet meals and innovative meat alternatives from a strictly pathogen-free kitchen.' },
+  { label: 'We inspire', title: 'Art at every turn', text: 'Original artwork is displayed throughout the hotel, so our spaces inspire and delight wherever you wander.' },
+  { label: 'We care', title: 'Personal service', text: 'Attentive, personalised hospitality with a standard of care that meets international expectations.' },
+  { label: 'We conserve', title: 'Rooted in purpose', text: 'Guided by sustainability and mindful living — a place to rest, and to reconnect with your values and your journey.' },
+];
+---
+<Base title="Our Story" description="The 33rd Executive Suites is a modern, luxurious retreat in Babesa, Thimphu, dedicated to comfort, style and mindful living.">
+  <StillHero image={img('lobby-2')} alt="The lobby lounge at The 33rd Executive Suites, looking out over the valley" />
+
+  <section class="ed-band">
+    <div class="ed-wrap">
+      <header class="ed-intro reveal">
+        <h1>Our Story</h1>
+        <span class="ed-intro__sub">Conscious luxury in the heart of Thimphu</span>
+        <p>The 33rd Executive Suites is a modern, luxurious retreat in Babesa, dedicated to comfort, style and mindful living.</p>
+        <p>Our mission is simple: to provide a space where guests can relax, rejuvenate and indulge in conscious luxury.</p>
+      </header>
+
+      <article class="ed-row reveal">
+        <div class="ed-row__media">
+          <Image src={img('lobby-1')} alt="A hand-painted Bhutanese mural in the hotel lobby" widths={[600, 900, 1300]} sizes="(max-width: 760px) 100vw, 600px" />
+        </div>
+        <div class="ed-panel">
+          <span class="ed-label">We are the best host for your comfort</span>
+          <h2>Every detail, <em>considered</em></h2>
+          <p>Adorned with original artwork, our spaces inspire at every turn. At The 33rd, every detail — from our food to our service — is designed to ensure a seamless and unforgettable experience.</p>
+          <a class="text-link" href="/rooms">Discover the suites</a>
+        </div>
+      </article>
+
+      <article class="ed-row ed-row--flip reveal">
+        <div class="ed-row__media">
+          <Image src={img('dining-1')} alt="A vegetarian dish at Artisan’s Table" widths={[600, 900, 1300]} sizes="(max-width: 760px) 100vw, 600px" />
+        </div>
+        <div class="ed-panel">
+          <span class="ed-label">Our philosophy</span>
+          <h2>Fresh, creative, <em>wholesome</em></h2>
+          <p>Our signature restaurant, Artisan’s Table, celebrates fresh, creative and wholesome vegetarian dishes, making every meal a memorable experience.</p>
+          <p>Fresh artisanal treats come from our in-house bakery every day.</p>
+          <a class="text-link" href="/experiences/artisans-table">Read more</a>
+        </div>
+      </article>
+
+      <article class="ed-row reveal">
+        <div class="ed-row__media">
+          <Image src={img('spa-1')} alt="A cocktail at the rooftop bar" widths={[600, 900, 1300]} sizes="(max-width: 760px) 100vw, 600px" />
+        </div>
+        <div class="ed-panel">
+          <span class="ed-label">Beyond the suite</span>
+          <h2>Space to <em>unwind</em></h2>
+          <p>Beyond exceptional dining, we offer a range of premium amenities to make your stay truly special:</p>
+          <ul>
+            <li>A rooftop bar with stunning views</li>
+            <li>A well-equipped gym and Om Spa</li>
+            <li>A large conference facility</li>
+            <li>An in-house bakery</li>
+          </ul>
+          <a class="text-link" href="/experiences">Explore experiences</a>
+        </div>
+      </article>
+
+      <header class="ed-head reveal">
+        <span class="ed-label">What guides us</span>
+        <h2>Our <em>pillars</em></h2>
+      </header>
+
+      <ul class="ed-cards pillars" style="--cols: 4">
+        {pillars.map((p, i) => (
+          <li class:list={['ed-card reveal', `reveal-delay-${i}`]}>
+            <div class="ed-panel">
+              <span class="ed-label">{p.label}</span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <ul class="stats reveal">
+        {stats.map((s) => <li><strong>{s.value}</strong><span>{s.label}</span></li>)}
+      </ul>
+
+      <div class="ed-intro reveal">
+        <h2>Stay with <em>us</em></h2>
+        <p>Our reservations team will reply with availability and our best rate.</p>
+        <div class="text-links cta">
+          <a class="text-link" href="/book">Book your stay</a>
+          <a class="text-link" href="/contact">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pillars { list-style: none; padding: 0; margin: 0; }
+  .pillars .ed-panel { padding-top: 32px; border-top: 1px solid var(--gold); }
+  .stats { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stats li { display: flex; flex-direction: column; gap: 10px; padding: 30px; background: var(--sand); }
+  .stats strong { font-family: var(--font-display); font-weight: 400; font-size: 2.2rem; line-height: 1; color: var(--gold-deep); }
+  .stats span { font-family: var(--font-ui); font-size: .64rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .cta { justify-content: center; margin-top: 8px; }
+  @media (max-width: 900px) { .stats { grid-template-columns: 1fr 1fr; } }
+</style>

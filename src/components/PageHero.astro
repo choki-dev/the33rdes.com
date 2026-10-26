@@ -1,0 +1,48 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  short?: boolean;
+}
+const { image, eyebrow, title, subtitle, short = false } = Astro.props;
+---
+<section class:list={['phero', { 'phero--short': short }]}>
+  <div class="phero__media">
+    <Image src={image} alt="" widths={[800, 1400, 2000]} sizes="100vw" loading="eager" fetchpriority="high" />
+  </div>
+  <div class="phero__content container">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1 set:html={title} />
+    {subtitle && <p>{subtitle}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative; min-height: 82svh; display: flex; align-items: flex-end;
+    color: var(--ivory); overflow: hidden; background: var(--ink);
+  }
+  .phero--short { min-height: 62svh; }
+  .phero__media { position: absolute; inset: 0; }
+  .phero__media :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    animation: phero-zoom 14s var(--ease-out) both;
+  }
+  .phero__media::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(18, 17, 15, .78) 0%, rgba(18, 17, 15, .25) 50%, rgba(18, 17, 15, .35) 100%);
+  }
+  .phero__content { position: relative; padding-bottom: clamp(56px, 9vw, 112px); padding-top: calc(var(--header-h) + 40px); }
+  .phero__content .eyebrow { color: var(--gold-soft); animation: phero-up 1.2s var(--ease-out) .2s both; }
+  .phero h1 { color: var(--ivory); max-width: 14ch; margin: 0; animation: phero-up 1.2s var(--ease-out) .35s both; }
+  .phero h1 :global(em) { color: var(--gold-soft); }
+  .phero p { max-width: 52ch; margin: 24px 0 0; font-size: clamp(1rem, 1.25vw, 1.12rem); color: #e6e0d4; animation: phero-up 1.2s var(--ease-out) .5s both; }
+  @keyframes phero-zoom { from { transform: scale(1.12); } to { transform: scale(1); } }
+  @keyframes phero-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+</style>

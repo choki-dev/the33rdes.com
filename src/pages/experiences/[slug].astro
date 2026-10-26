@@ -1,0 +1,130 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Filmstrip from '../../components/Filmstrip.astro';
+import EnquiryForm from '../../components/EnquiryForm.astro';
+import Icon from '../../components/Icon.astro';
+import { experiences, site } from '../../data/site';
+import { img } from '../../lib/images';
+
+export function getStaticPaths() {
+  return experiences.map((xp) => ({ params: { slug: xp.slug }, props: { xp } }));
+}
+
+const { xp } = Astro.props;
+const index = experiences.indexOf(xp);
+const next = experiences[(index + 1) % experiences.length];
+const after = experiences[(index + 2) % experiences.length];
+const reserveCopy = {
+  spa: { title: 'Book a treatment', label: 'Request appointment' },
+  event: null,
+  dining: null,
+  none: null,
+}[xp.reserve];
+// Dining and events have no online form: guests call instead.
+const callLabel = { dining: 'Call to reserve a table', event: 'Call to plan your event' }[xp.reserve as 'dining' | 'event'];
+---
+<Base title={xp.name} description={xp.intro}>
+  <PageHero image={img(xp.hero)} eyebrow={xp.kind} title={xp.name} subtitle={xp.tagline} />
+
+  <section class="section">
+    <div class="container about">
+      <div class="reveal">
+        <span class="eyebrow">{xp.kind}</span>
+        <h2>{xp.tagline}</h2>
+        <p class="lead">{xp.intro}</p>
+        {xp.body.map((p) => <p class="body">{p}</p>)}
+      </div>
+      <aside class="info reveal reveal-delay-1">
+        <div class="info__row">
+          <Icon name="pin" />
+          <div><span class="label">Location</span><strong>{xp.location}</strong></div>
+        </div>
+        {xp.hours.map((h) => (
+          <div class="info__row">
+            <Icon name="clock" />
+            <div><span class="label">{h.label}</span><strong>{h.value}</strong></div>
+          </div>
+        ))}
+        <div class="info__row">
+          <Icon name="phone" />
+          <div><span class="label">Enquiries</span><a href={site.phoneHref}>{site.phone}</a></div>
+        </div>
+        {reserveCopy && <a class="btn btn--block" href="#reserve">{reserveCopy.title}</a>}
+        {callLabel && <a class="btn btn--block" href={site.phoneHref}>{callLabel}</a>}
+      </aside>
+    </div>
+  </section>
+
+  {xp.images.length > 1 && (
+    <Filmstrip images={xp.images} caption={xp.name} title={`Inside ${xp.name}`} id={xp.slug === 'artisans-table' ? 'menu' : undefined} />
+  )}
+
+  {reserveCopy && (
+    <section class="section" id="reserve">
+      <div class="container container--narrow">
+        <div class="center reveal">
+          <span class="eyebrow eyebrow--center">Reservations</span>
+          <h2>{reserveCopy.title}</h2>
+          <p class="lead">Send us your preferred date and time and our team will confirm by email or phone.</p>
+        </div>
+        <div class="reveal formwrap">
+          <EnquiryForm kind="spa" venue={xp.name} submitLabel={reserveCopy.label} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <nav class="pn" aria-label="More experiences">
+    {[next, after].map((x) => (
+      <a href={`/experiences/${x.slug}`} class="pn__card">
+        <div class="pn__media"><Image src={img(x.hero)} alt="" widths={[700, 1100, 1500]} sizes="(max-width: 760px) 100vw, 50vw" /></div>
+        <div class="pn__body">
+          <span class="pn__label">Next experience <Icon name="arrow" /></span>
+          <h2>{x.name}</h2>
+          <span class="pn__meta">{x.kind} · {x.location}</span>
+        </div>
+      </a>
+    ))}
+  </nav>
+
+  <Lightbox />
+</Base>
+
+<style>
+  .about { display: grid; grid-template-columns: 1fr 360px; gap: clamp(40px, 7vw, 110px); align-items: start; }
+  .about .lead { color: var(--charcoal); }
+  .body { color: var(--muted); }
+  .info { background: var(--sand); padding: 36px; display: grid; gap: 22px; position: sticky; top: calc(var(--header-h) + 24px); }
+  .info__row { display: flex; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid var(--stone); }
+  .info__row :global(svg) { color: var(--gold); flex: none; }
+  .info__row .label { display: block; margin-bottom: 2px; }
+  .info__row strong, .info__row a { font-family: var(--font-display); font-weight: 400; font-size: var(--fs-detail); color: var(--ink); }
+  .formwrap { margin-top: 48px; background: var(--white); border: 1px solid var(--stone); padding: clamp(24px, 5vw, 56px); }
+
+  /* Previous / next experience: two photo halves. */
+  .pn { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--ink); }
+  .pn__card { position: relative; display: block; min-height: clamp(320px, 38vw, 520px); overflow: hidden; color: var(--ivory); }
+  .pn__media { position: absolute; inset: 0; }
+  .pn__media :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease-out); }
+  .pn__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(15, 14, 12, .8), rgba(15, 14, 12, .25)); transition: background .6s; }
+  .pn__card:hover .pn__media :global(img) { transform: scale(1.06); }
+  .pn__card:hover .pn__media::after { background: linear-gradient(to top, rgba(15, 14, 12, .85), rgba(15, 14, 12, .45)); }
+  .pn__body { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(28px, 4vw, 56px); }
+  .pn__label { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 14px; font-family: var(--font-ui); font-size: .64rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold-soft); }
+  .pn__label :global(svg) { transition: transform .4s var(--ease); }
+  .pn__card:hover .pn__label :global(svg) { transform: translateX(6px); }
+  .pn h2 { margin: 0 0 8px; color: var(--ivory); font-size: clamp(1.7rem, 3vw, 2.6rem); }
+  .pn__meta { font-size: .78rem; color: #ddd6c8; }
+  @media (max-width: 760px) {
+    .pn { grid-template-columns: 1fr; }
+    .pn__card { min-height: 280px; }
+  }
+  @media (max-width: 1000px) {
+    .about { grid-template-columns: 1fr; }
+    .info { position: static; }
+  }
+</style>
+

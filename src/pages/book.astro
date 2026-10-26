@@ -1,0 +1,542 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { addons, policies, rooms, site } from '../data/site';
+import { img } from '../lib/images';
+
+const roomData = await Promise.all(
+  rooms.map(async (r) => ({
+    slug: r.slug,
+    name: r.name,
+    tagline: r.tagline ?? '',
+    size: r.size,
+    bed: r.bed,
+    capacity: r.capacity,
+    view: r.view,
+    highlight: r.highlight ?? '',
+    thumb: (await getImage({ src: img(r.hero), width: 720, height: 540, fit: 'cover', format: 'webp' })).src,
+  })),
+);
+const config = { rooms: roomData, addons, policies, endpoint: site.formEndpoint };
+const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
+---
+<Base title="Book Your Stay" description="Book your stay at The 33rd Executive Suites, Thimphu — choose your dates and room, and request airport transfers, spa treatments and more." overlayHeader={false}>
+  <section class="book">
+    <div class="container">
+      <header class="book__head">
+        <span class="eyebrow">Reservations</span>
+        <h1>Book your <em>stay</em></h1>
+        <ol class="steps" data-steps>
+          {steps.map((s, i) => (
+            <li data-step-label={i + 1}>
+              <span class="steps__n">{i + 1}</span>
+              <span class="steps__t">{s}</span>
+            </li>
+          ))}
+        </ol>
+      </header>
+
+      <div class="book__grid">
+        <div class="book__main">
+          <div class="notice notice--error" role="alert" hidden data-error></div>
+
+          <!-- Step 1: dates & guests -->
+          <section class="panel" data-panel="1">
+            <h2>When would you like to stay?</h2>
+            <div class="stay">
+              <div class="stay__cal" data-calendar></div>
+              <div class="stay__side">
+                <div class="stay__dates">
+                  <div><span class="label">Arrival</span><strong data-show="checkIn">—</strong></div>
+                  <div><span class="label">Departure</span><strong data-show="checkOut">—</strong></div>
+                </div>
+                <div class="stay__guests">
+                  <div class="stepper" data-stepper="adults" data-min="1" data-max="10">
+                    <div><strong>Adults</strong><small>Ages 12+</small></div>
+                    <div class="stepper__ctrl"><button type="button" data-step="-1" aria-label="Fewer adults">−</button><output></output><button type="button" data-step="1" aria-label="More adults">+</button></div>
+                  </div>
+                  <div class="stepper" data-stepper="children" data-min="0" data-max="6">
+                    <div><strong>Children</strong><small>Ages 0–11, sharing</small></div>
+                    <div class="stepper__ctrl"><button type="button" data-step="-1" aria-label="Fewer children">−</button><output></output><button type="button" data-step="1" aria-label="More children">+</button></div>
+                  </div>
+                  <div class="stepper" data-stepper="rooms" data-min="1" data-max={policies.maxRooms}>
+                    <div><strong>Rooms</strong><small>Up to {policies.maxRooms} online</small></div>
+                    <div class="stepper__ctrl"><button type="button" data-step="-1" aria-label="Fewer rooms">−</button><output></output><button type="button" data-step="1" aria-label="More rooms">+</button></div>
+                  </div>
+                </div>
+                <button class="btn btn--block" type="button" data-go="2">Find rooms</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: room & rate -->
+          <section class="panel" data-panel="2" hidden>
+            <div class="panel__head">
+              <h2>Choose your room</h2>
+              <button class="link-arrow" type="button" data-go="1">Change dates</button>
+            </div>
+            <div class="roomlist" data-roomlist></div>
+          </section>
+
+          <!-- Step 3: add-ons -->
+          <section class="panel" data-panel="3" hidden>
+            <div class="panel__head">
+              <h2>Enhance your stay</h2>
+              <button class="link-arrow" type="button" data-go="2">Change room</button>
+            </div>
+            <p class="muted">Optional extras — tick anything you would like us to arrange.</p>
+            <div class="addons" data-addons></div>
+            <div class="panel__actions">
+              <button class="btn" type="button" data-go="4">Continue to guest details</button>
+            </div>
+          </section>
+
+          <!-- Step 4: guest details -->
+          <section class="panel" data-panel="4" hidden>
+            <div class="panel__head">
+              <h2>Guest details</h2>
+              <button class="link-arrow" type="button" data-go="3">Back</button>
+            </div>
+            <form class="form-grid" data-guest-form novalidate>
+              <div class="hp" aria-hidden="true"><label>Leave empty <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+              <div class="field"><label for="g-first">First name</label><input class="input" id="g-first" name="firstName" autocomplete="given-name" required /></div>
+              <div class="field"><label for="g-last">Last name</label><input class="input" id="g-last" name="lastName" autocomplete="family-name" required /></div>
+              <div class="field"><label for="g-email">Email</label><input class="input" id="g-email" name="email" type="email" autocomplete="email" required /></div>
+              <div class="field"><label for="g-phone">Phone / WhatsApp</label><input class="input" id="g-phone" name="phone" type="tel" autocomplete="tel" required minlength="6" /></div>
+              <div class="field"><label for="g-country">Country of residence</label><input class="input" id="g-country" name="country" autocomplete="country-name" /></div>
+              <div class="field">
+                <label for="g-arrival">Estimated arrival time</label>
+                <select class="select" id="g-arrival" name="arrivalTime">
+                  <option value="">I’m not sure yet</option>
+                  <option>Before 12:00 PM (early check-in request)</option>
+                  <option>12:00 PM – 3:00 PM</option>
+                  <option>3:00 PM – 6:00 PM</option>
+                  <option>6:00 PM – 9:00 PM</option>
+                  <option>After 9:00 PM</option>
+                </select>
+              </div>
+              <div class="field span-2">
+                <span class="label">Purpose of stay</span>
+                <div class="chips">
+                  <label><input type="radio" name="purpose" value="Leisure" /><span>Leisure</span></label>
+                  <label><input type="radio" name="purpose" value="Business" /><span>Business</span></label>
+                  <label><input type="radio" name="purpose" value="Celebration" /><span>Celebration</span></label>
+                </div>
+              </div>
+              <div class="field span-2"><label for="g-req">Special requests</label><textarea class="textarea" id="g-req" name="requests" placeholder="Dietary needs, bed preference, celebrations, accessibility…"></textarea></div>
+              <label class="span-2 terms">
+                <input type="checkbox" name="acceptTerms" required />
+                <span>I understand that this is a reservation request. No payment is taken online — the hotel will confirm availability and send the rate and payment details by email.</span>
+              </label>
+              <div class="span-2 panel__actions">
+                <button class="btn" type="submit" data-submit>Request reservation</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Confirmation -->
+          <section class="panel confirm" data-panel="5" hidden>
+            <span class="eyebrow eyebrow--center">Request received</span>
+            <h2>Thank you, <em data-confirm-name></em></h2>
+            <p class="lead">Your reservation reference is</p>
+            <p class="confirm__ref" data-confirm-ref></p>
+            <p>Our reservations team will confirm availability and send our best rate to <strong data-confirm-email></strong> shortly. For anything urgent, call <a href={site.phoneHref}>{site.phone}</a> or <a href={site.whatsappHref} target="_blank" rel="noopener">WhatsApp us</a>.</p>
+            <div class="confirm__actions">
+              <a class="btn" href="/">Return home</a>
+              <a class="btn btn--outline" href="/experiences">Explore experiences</a>
+            </div>
+          </section>
+        </div>
+
+        <aside class="summary" data-summary>
+          <span class="label">Your reservation</span>
+          <div class="summary__body" data-summary-body></div>
+          <div class="summary__help">
+            <Icon name="phone" size={16} />
+            <span>Need help? <a href={site.phoneHref}>{site.phone}</a></span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline type="application/json" id="booking-config" set:html={JSON.stringify(config)} />
+</Base>
+
+<style>
+  .book { padding: calc(var(--header-h) + clamp(32px, 5vw, 72px)) 0 var(--section); background: var(--ivory); min-height: 100vh; }
+  .book__head { text-align: center; margin-bottom: clamp(32px, 5vw, 56px); }
+  .steps { list-style: none; padding: 0; margin: 28px auto 0; display: flex; justify-content: center; gap: 0; max-width: 760px; }
+  .steps li { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; color: var(--muted); }
+  .steps li + li::before { content: ''; position: absolute; top: 17px; right: 50%; width: 100%; height: 1px; background: var(--stone); z-index: 0; }
+  .steps li.is-done + li::before, .steps li.is-done + li.is-current::before { background: var(--gold); }
+  .steps__n {
+    position: relative; z-index: 1; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--ivory); border: 1px solid var(--stone); font-family: var(--font-ui); font-size: .75rem;
+  }
+  .steps__t { font-family: var(--font-ui); font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; text-align: center; }
+  .steps li.is-current { color: var(--ink); }
+  .steps li.is-current .steps__n { background: var(--ink); border-color: var(--ink); color: var(--ivory); }
+  .steps li.is-done .steps__n { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  @media (max-width: 560px) { .steps__t { display: none; } }
+
+  .book__grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+  .book__main { min-width: 0; display: grid; gap: 20px; }
+  .panel { min-width: 0; background: var(--white); border: 1px solid var(--stone); padding: clamp(20px, 4vw, 44px); }
+  .panel__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+  .panel__head .link-arrow { background: none; border-top: 0; border-left: 0; border-right: 0; cursor: pointer; }
+  .panel__actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .muted { color: var(--muted); }
+
+  /* Calendar on top; dates, guests and the button sit in a row beneath it so step 1 never outgrows its column. */
+  .stay { display: grid; gap: 28px; }
+  .stay__cal:global(.dp) { box-shadow: none; padding: 0; border: 0; }
+  .stay__side { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 32px; align-items: start; padding-top: 24px; border-top: 1px solid var(--stone); }
+  .stay__side > .btn { grid-column: 1 / -1; }
+  .stay__dates { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--stone); }
+  .stay__dates > div { padding: 14px 16px; }
+  .stay__dates > div + div { border-left: 1px solid var(--stone); }
+  .stay__dates strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; color: var(--ink); margin-top: 4px; }
+  .stay__guests { display: grid; gap: 16px; }
+  @media (max-width: 640px) { .stay__side { grid-template-columns: 1fr; } }
+
+  .roomlist { display: grid; gap: 24px; margin-top: 16px; }
+  .addons { display: grid; gap: 14px; margin-top: 20px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chips label { cursor: pointer; }
+  .chips input { position: absolute; opacity: 0; pointer-events: none; }
+  .chips span {
+    display: inline-block; padding: 10px 20px; border: 1px solid var(--stone);
+    font-family: var(--font-ui); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; transition: all .3s;
+  }
+  .chips input:checked + span { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+  .chips input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .terms { display: flex; gap: 14px; align-items: flex-start; font-size: .9rem; color: var(--muted); cursor: pointer; }
+  .terms input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--gold-deep); flex: none; }
+
+  .confirm { text-align: center; padding-block: clamp(48px, 7vw, 88px); }
+  .confirm .lead { margin-bottom: 4px; }
+  .confirm__ref { font-family: var(--font-display); font-size: clamp(2.2rem, 5vw, 3.4rem); letter-spacing: .08em; color: var(--gold-deep); margin-bottom: 24px; }
+  .confirm p { max-width: 56ch; margin-inline: auto; }
+  .confirm a:not(.btn) { color: var(--gold-deep); border-bottom: 1px solid var(--gold-soft); }
+  .confirm__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; }
+
+  .summary { position: sticky; top: calc(var(--header-h) + 24px); background: var(--ink); color: #cfc8bb; padding: 32px; }
+  .summary > .label { color: var(--gold); }
+  .summary__help { display: flex; gap: 10px; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(216, 199, 156, .16); font-size: .85rem; }
+  .summary__help :global(svg) { color: var(--gold); }
+  .summary__help a { color: var(--ivory); }
+  @media (max-width: 1100px) {
+    .book__grid { grid-template-columns: 1fr; }
+    .summary { position: static; }
+  }
+</style>
+
+<style is:global>
+  /* Rendered client-side by the booking script. */
+  .ropt { display: grid; grid-template-columns: 280px 1fr; border: 1px solid var(--stone); transition: border-color .3s, box-shadow .3s; }
+  .ropt.is-preferred { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+  .ropt.is-selected { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .ropt__img { position: relative; min-height: 220px; background: var(--stone); }
+  .ropt__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ropt__badge { position: absolute; left: 12px; top: 12px; padding: 6px 10px; background: rgba(250, 247, 241, .94); font-family: var(--font-ui); font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; }
+  .ropt__body { padding: 24px 28px; display: flex; flex-direction: column; }
+  .ropt__body h3 { font-size: var(--fs-card); margin-bottom: 4px; }
+  .ropt__meta { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0 0 12px; font-size: var(--fs-small); color: var(--muted); }
+  .ropt__desc { font-size: var(--fs-small); color: var(--muted); margin: 0 0 18px; }
+  .ropt__foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: 1px solid var(--stone); }
+  .ropt__note { font-size: var(--fs-small); color: var(--muted); }
+  .ropt__foot .btn { min-height: 44px; padding: 0 22px; }
+  .ropt__foot .btn.is-selected { --btn-bg: var(--ink); --btn-bd: var(--ink); }
+  .ropt__warn { font-size: var(--fs-small); color: #a4473a; margin: 0; }
+  @media (max-width: 760px) {
+    .ropt { grid-template-columns: 1fr; }
+    .ropt__img { min-height: 200px; }
+  }
+
+  .addon { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; padding: 20px 22px; border: 1px solid var(--stone); cursor: pointer; transition: border-color .3s, background .3s; }
+  .addon:hover { border-color: var(--gold-soft); }
+  .addon:has(input:checked) { border-color: var(--gold); background: var(--gold-wash); }
+  .addon input { width: 20px; height: 20px; accent-color: var(--gold-deep); }
+  .addon strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-detail); color: var(--ink); }
+  .addon span { font-size: var(--fs-small); color: var(--muted); }
+
+  .sum__dates { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 18px; }
+  .sum__dates strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-detail); color: var(--ivory); }
+  .sum__dates small { font-size: .78rem; color: #8f887b; }
+  .sum__line { display: flex; justify-content: space-between; gap: 12px; margin: 0; }
+  .sum__room { margin-top: 16px; padding: 16px 0; border-block: 1px solid rgba(216, 199, 156, .16); }
+  .sum__room strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: var(--fs-card); color: var(--ivory); }
+  .sum__room small { font-size: .78rem; color: #8f887b; }
+  .sum__extras { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; font-size: .86rem; }
+  .sum__extras li::before { content: '+ '; color: var(--gold); }
+  .sum__note { margin: 18px 0 0; font-size: .78rem; line-height: 1.6; color: #8f887b; }
+  .sum__empty { margin: 16px 0 0; font-family: var(--font-display); font-size: var(--fs-detail); color: #a9a294; }
+</style>
+
+<script>
+  import { createRangePicker, formatLong, today } from '../lib/datepicker';
+  import { validateStay, nightsBetween, type StayInput } from '../lib/stay';
+
+  type Config = {
+    rooms: { slug: string; name: string; tagline: string; size: string; bed: string; capacity: number; view: string; highlight: string; thumb: string }[];
+    addons: { id: string; name: string; description: string }[];
+    policies: { maxRooms: number };
+    endpoint: string;
+  };
+  const cfg: Config = JSON.parse(document.getElementById('booking-config')!.textContent!);
+  const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+
+  // ---------- State ----------
+  // Everything starts empty and only appears on the reservation card once the guest chooses it.
+  // Values passed from the booking bar (?checkin=…) prefill the form on arrival; a refresh starts over.
+  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  if (nav?.type === 'reload' && location.search) history.replaceState(null, '', location.pathname);
+  const params = new URLSearchParams(nav?.type === 'reload' ? '' : location.search);
+  const int = (v: string | null) => (v && /^\d+$/.test(v) ? Number(v) : null);
+  const validDate = (v: string | null) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) && v >= today() ? v : '');
+  type Count = 'adults' | 'children' | 'rooms';
+  const fromUrl = { adults: int(params.get('adults')), children: int(params.get('children')), rooms: int(params.get('rooms')) };
+  const state: StayInput & { step: number; preferred: string | null } = {
+    checkIn: validDate(params.get('checkin')),
+    checkOut: validDate(params.get('checkout')),
+    adults: Math.max(1, fromUrl.adults ?? 1),
+    children: fromUrl.children ?? 0,
+    rooms: Math.min(cfg.policies.maxRooms, Math.max(1, fromUrl.rooms ?? 1)),
+    roomSlug: '',
+    addons: [],
+    step: 1,
+    preferred: params.get('room'),
+  };
+  // Which guest counts the guest has actually chosen (unchosen ones show as "—").
+  const chosen: Record<Count, boolean> = { adults: fromUrl.adults !== null, children: fromUrl.children !== null, rooms: fromUrl.rooms !== null };
+  if (state.checkIn && state.checkOut && state.checkOut <= state.checkIn) state.checkOut = '';
+
+  const errorBox = $('[data-error]');
+  const showError = (msg: string | null) => {
+    errorBox.hidden = !msg;
+    errorBox.textContent = msg ?? '';
+    if (msg) errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // ---------- Step navigation ----------
+  function go(step: number) {
+    showError(null);
+    if (step >= 2) {
+      if (!state.checkIn || !state.checkOut) return showError('Please choose your arrival and departure dates.');
+      if (!chosen.adults) return showError('Please choose the number of adults.');
+      // Rooms default to one once the guest moves on.
+      if (!chosen.rooms) {
+        chosen.rooms = true;
+        paintSteppers();
+      }
+      // The room is chosen in step 2, so check dates and guests against a placeholder room first.
+      const placeholder = cfg.rooms[0];
+      const err = validateStay({ ...state, roomSlug: state.roomSlug || placeholder.slug, adults: Math.min(state.adults, placeholder.capacity * state.rooms) });
+      if (err) return showError(err);
+    }
+    if (step >= 3) {
+      if (!state.roomSlug) return showError('Please choose a room.');
+      const err = validateStay(state);
+      if (err) return showError(err);
+    }
+    state.step = step;
+    document.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => (p.hidden = Number(p.dataset.panel) !== step));
+    document.querySelectorAll<HTMLElement>('[data-step-label]').forEach((li) => {
+      const n = Number(li.dataset.stepLabel);
+      li.classList.toggle('is-current', n === step);
+      li.classList.toggle('is-done', n < step);
+    });
+    if (step === 2) renderRooms();
+    if (step === 3) renderAddons();
+    renderSummary();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll<HTMLElement>('[data-go]').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.go))));
+
+  // ---------- Step 1 ----------
+  const showDates = () => {
+    $('[data-show="checkIn"]').textContent = state.checkIn ? formatLong(state.checkIn) : '—';
+    $('[data-show="checkOut"]').textContent = state.checkOut ? formatLong(state.checkOut) : '—';
+  };
+  createRangePicker({
+    root: $('[data-calendar]'),
+    initial: { start: state.checkIn || null, end: state.checkOut || null },
+    onChange: ({ start, end }) => {
+      state.checkIn = start ?? '';
+      state.checkOut = end ?? '';
+      showDates();
+      renderSummary();
+    },
+  });
+  function paintSteppers() {
+    document.querySelectorAll<HTMLElement>('[data-stepper]').forEach((s) => {
+      const key = s.dataset.stepper as Count;
+      s.querySelector('output')!.textContent = chosen[key] ? String(state[key]) : '—';
+      s.querySelector<HTMLButtonElement>('[data-step="-1"]')!.disabled = !chosen[key] || state[key] <= Number(s.dataset.min);
+      s.querySelector<HTMLButtonElement>('[data-step="1"]')!.disabled = chosen[key] && state[key] >= Number(s.dataset.max);
+    });
+  }
+  document.querySelectorAll<HTMLElement>('[data-stepper]').forEach((s) =>
+    s.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-step]');
+      if (!btn) return;
+      const key = s.dataset.stepper as Count;
+      if (!chosen[key]) {
+        // The first "+" picks the smallest sensible count: one adult, one child, one room.
+        chosen[key] = true;
+        state[key] = Math.max(1, Number(s.dataset.min));
+      } else {
+        state[key] = Math.min(Number(s.dataset.max), Math.max(Number(s.dataset.min), state[key] + Number(btn.dataset.step)));
+      }
+      paintSteppers();
+      renderSummary();
+    }),
+  );
+
+  // ---------- Step 2 ----------
+  function renderRooms() {
+    const ordered = [...cfg.rooms].sort((a, b) => Number(b.slug === state.preferred) - Number(a.slug === state.preferred));
+    $('[data-roomlist]').innerHTML = ordered
+      .map((r) => {
+        const fits = state.adults <= r.capacity * state.rooms;
+        const selected = state.roomSlug === r.slug;
+        return `<article class="ropt ${r.slug === state.preferred ? 'is-preferred' : ''} ${selected ? 'is-selected' : ''}">
+          <div class="ropt__img"><img src="${r.thumb}" alt="${esc(r.name)}" loading="lazy" />${r.highlight ? `<span class="ropt__badge">${esc(r.highlight)}</span>` : ''}</div>
+          <div class="ropt__body">
+            <h3>${esc(r.name)}</h3>
+            <p class="ropt__meta"><span>${esc(r.size)}</span><span>${esc(r.bed)}</span><span>Sleeps ${r.capacity}</span><span>${esc(r.view)}</span></p>
+            ${r.tagline ? `<p class="ropt__desc">${esc(r.tagline)}</p>` : ''}
+            <div class="ropt__foot">
+              ${fits ? '<span class="ropt__note">Breakfast included</span>' : `<p class="ropt__warn">Sleeps ${r.capacity} adults per room — add rooms in step 1 for ${state.adults} adults.</p>`}
+              <button type="button" class="btn ${selected ? 'is-selected' : ''}" data-pick="${r.slug}" ${fits ? '' : 'disabled'}>${selected ? 'Selected' : 'Select'}</button>
+            </div>
+          </div>
+        </article>`;
+      })
+      .join('');
+  }
+  $('[data-roomlist]').addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pick]');
+    if (!btn) return;
+    state.roomSlug = btn.dataset.pick!;
+    go(3);
+  });
+
+  // ---------- Step 3 ----------
+  function renderAddons() {
+    $('[data-addons]').innerHTML = cfg.addons
+      .map(
+        (a) => `<label class="addon">
+          <input type="checkbox" value="${a.id}" ${state.addons.includes(a.id) ? 'checked' : ''} />
+          <div><strong>${esc(a.name)}</strong><span>${esc(a.description)}</span></div>
+        </label>`,
+      )
+      .join('');
+  }
+  $('[data-addons]').addEventListener('change', () => {
+    state.addons = [...document.querySelectorAll<HTMLInputElement>('[data-addons] input:checked')].map((i) => i.value);
+    renderSummary();
+  });
+
+  // ---------- Summary ----------
+  function renderSummary() {
+    const nights = nightsBetween(state.checkIn, state.checkOut);
+    const parts = [
+      chosen.adults && `${state.adults} adult${state.adults > 1 ? 's' : ''}`,
+      chosen.children && `${state.children} child${state.children === 1 ? '' : 'ren'}`,
+      chosen.rooms && `${state.rooms} room${state.rooms > 1 ? 's' : ''}`,
+    ].filter(Boolean);
+    const room = cfg.rooms.find((r) => r.slug === state.roomSlug);
+    const extras = cfg.addons.filter((a) => state.addons.includes(a.id));
+    let html = `<div class="sum__dates">
+      <div><small>Arrival</small><strong>${state.checkIn ? formatLong(state.checkIn) : '—'}</strong></div>
+      <div><small>Departure</small><strong>${state.checkOut ? formatLong(state.checkOut) : '—'}</strong></div>
+    </div>
+    <p class="sum__line"><span>${nights > 0 ? `${nights} night${nights > 1 ? 's' : ''}` : 'Select dates'}</span><span>${parts.length ? parts.join(' · ') : 'Select guests'}</span></p>`;
+    html += room
+      ? `<div class="sum__room"><strong>${esc(room.name)}</strong><small>Breakfast included</small></div>`
+      : `<p class="sum__empty">Choose a room to continue.</p>`;
+    if (extras.length) html += `<ul class="sum__extras">${extras.map((a) => `<li>${esc(a.name)}</li>`).join('')}</ul>`;
+    html += `<p class="sum__note">No payment is taken online. We confirm availability and email you our best rate. Bhutan’s Sustainable Development Fee (SDF), where applicable, is charged separately.</p>`;
+    $('[data-summary-body]').innerHTML = html;
+  }
+
+  // ---------- Step 4: submit ----------
+  const form = $<HTMLFormElement>('[data-guest-form]');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showError(null);
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const stayError = validateStay(state);
+    if (stayError) return showError(stayError);
+    const guest = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    const button = $<HTMLButtonElement>('[data-submit]');
+    button.disabled = true;
+    button.textContent = 'Sending…';
+    try {
+      const ref = makeRef();
+      const room = cfg.rooms.find((r) => r.slug === state.roomSlug)!;
+      const extras = cfg.addons.filter((a) => state.addons.includes(a.id)).map((a) => a.name);
+      const fullName = `${guest.firstName} ${guest.lastName}`.trim();
+      // Sent by FormSubmit as an email to the reservations address; replies go straight to the guest.
+      const res = await fetch(cfg.endpoint, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `New booking request ${ref} — ${room.name}, ${state.checkIn} → ${state.checkOut}`,
+          _template: 'table',
+          _captcha: 'false',
+          _honey: guest.website ?? '',
+          _replyto: guest.email,
+          Reference: ref,
+          name: fullName,
+          email: guest.email,
+          Phone: guest.phone,
+          Country: guest.country || '—',
+          Arrival: formatLong(state.checkIn),
+          Departure: formatLong(state.checkOut),
+          Nights: String(nightsBetween(state.checkIn, state.checkOut)),
+          Room: `${room.name} × ${state.rooms}`,
+          Guests: `${state.adults} adult${state.adults > 1 ? 's' : ''}, ${state.children} child${state.children === 1 ? '' : 'ren'}`,
+          Extras: extras.length ? extras.join(', ') : '—',
+          'Estimated arrival time': guest.arrivalTime || '—',
+          'Purpose of stay': guest.purpose || '—',
+          'Special requests': guest.requests || '—',
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { success?: string | boolean; message?: string };
+      if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `HTTP ${res.status}`);
+      $('[data-confirm-name]').textContent = guest.firstName;
+      $('[data-confirm-ref]').textContent = ref;
+      $('[data-confirm-email]').textContent = guest.email;
+      go(5);
+      document.querySelectorAll<HTMLElement>('[data-step-label]').forEach((li) => li.classList.add('is-done'));
+    } catch (err) {
+      console.warn('Booking request not sent:', err);
+      showError('We could not send your request just now. Please try again, or call or WhatsApp +975 16993333.');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Request reservation';
+    }
+  });
+
+  /** Short, human-friendly reference such as "33R-7KQ4MZ". */
+  function makeRef() {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const bytes = crypto.getRandomValues(new Uint8Array(6));
+    return `33R-${[...bytes].map((b) => alphabet[b % alphabet.length]).join('')}`;
+  }
+
+  // ---------- Init ----------
+  // Browsers can restore typed values after a refresh; start the guest form clean as well.
+  form.reset();
+  showDates();
+  paintSteppers();
+  go(state.checkIn && state.checkOut && chosen.adults ? 2 : 1);
+</script>

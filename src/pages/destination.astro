@@ -1,0 +1,227 @@
+---
+// Destination, laid out like a quiet resort destination page: centred title and intro,
+// wide image-and-text rows, and per theme a photo stage driven by a numbered list of its places.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { attractionCategories, attractions } from '../data/site';
+import { img } from '../lib/images';
+import { slugify } from '../lib/slugify';
+
+const groups = attractionCategories.map((c) => ({ ...c, places: attractions.filter((a) => a.category === c.slug) }));
+
+---
+<Base
+  title="Destination"
+  description="Thimphu, Bhutan’s capital, from The 33rd Executive Suites in Babesa — Buddha Dordenma, Tashichho Dzong, Dochula Pass, Memorial Chorten and more."
+  overlayHeader={false}
+>
+  <!-- ============ TITLE + INTRO ============ -->
+  <section class="atitle">
+    <div class="container">
+      <h1>Destination</h1>
+      <p>Bhutan’s capital lies in a high Himalayan valley along the Wang Chhu — a city without traffic lights, where prayer wheels turn beside government offices and forest trails begin at the edge of town. From Babesa, at the southern gateway to the valley, its dzongs, passes and markets are all within easy reach.</p>
+    </div>
+  </section>
+
+  <!-- ============ SIDE BY SIDE: image two-thirds, text ============ -->
+  <section class="aside">
+    <div class="container aside__grid">
+      <div class="aside__media reveal">
+        <Image src={img('guide-buddha-point')} alt="The Buddha Dordenma above the Thimphu valley" widths={[700, 1100, 1600]} sizes="(max-width: 900px) 100vw, 62vw" loading="eager" />
+      </div>
+      <div class="aside__text reveal reveal-delay-1">
+        <h2>The Capital</h2>
+        <p>Thimphu is small enough to explore in a few days and rich enough to fill a lifetime. The great seated Buddha looks out over Babesa from the hillside above; the city centre, with its dzong, chorten and riverside market, is ten minutes’ drive away.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THEMES: photo stage + numbered list that drives it ============ -->
+  {groups.map((g, gi) => (
+    <section class:list={['atheme', { 'atheme--flip': gi % 2 === 1 }]} id={g.slug} aria-labelledby={`${g.slug}-title`} data-explorer>
+      <div class="container">
+        <header class="atheme__head reveal">
+          <span class="atheme__count">0{gi + 1} / 0{groups.length}</span>
+          <h2 id={`${g.slug}-title`}>{g.label}</h2>
+          <p>{g.intro}</p>
+        </header>
+        <div class="atheme__grid">
+          <div class="astage reveal" aria-hidden="true">
+            {g.places.map((a, i) => (
+              <figure class:list={['astage__slide', { 'is-active': i === 0 }]} data-slide={i}>
+                <Image src={img(a.image)} alt="" widths={[600, 900, 1300]} sizes="(max-width: 900px) 100vw, 55vw" />
+                <figcaption><span>{a.distance}</span>{a.name}</figcaption>
+              </figure>
+            ))}
+            <span class="astage__bar"><span data-bar></span></span>
+          </div>
+          <ol class="alist reveal reveal-delay-1">
+            {g.places.map((a, i) => (
+              <li class:list={['alist__item', { 'is-open': i === 0 }]} id={slugify(a.name)} data-item={i}>
+                <button type="button" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`${slugify(a.name)}-panel`}>
+                  <span class="alist__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="alist__name">{a.name}{a.sub && <small>{a.sub}</small>}</span>
+                </button>
+                <div class="alist__panel" id={`${slugify(a.name)}-panel`}>
+                  <div class="alist__inner">
+                    <div class="alist__img"><Image src={img(a.image)} alt={a.name} widths={[500, 800]} sizes="100vw" /></div>
+                    <p>{a.detail}</p>
+                    <span class="alist__dist">{a.distance}</span>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- ============ SIDE BY SIDE: getting here (image left) ============ -->
+  <section class="aside">
+    <div class="container aside__grid">
+      <div class="aside__media reveal">
+        <Image src={img('lobby-2')} alt="The lounge at The 33rd looking out over the valley" widths={[700, 1100, 1600]} sizes="(max-width: 900px) 100vw, 62vw" />
+      </div>
+      <div class="aside__text reveal reveal-delay-1">
+        <h2>Getting Here</h2>
+        <p>Paro International Airport, Bhutan’s gateway, is about an hour’s drive along the valley road — and Babesa is the first neighbourhood of Thimphu you reach. We can meet you at arrivals with a private car.</p>
+        <div class="abtns">
+          <a class="abtn" href="/travel-guide">Travel guide</a>
+          <a class="abtn" href="/book">Plan your stay</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  /* Resort-style destination page: white space, light serif headings, outlined uppercase buttons. */
+  .atitle, .aside, .atheme { background: var(--white); }
+  h1, h2, h3 { font-weight: 400; }
+
+  .abtns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .abtn {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 30px;
+    border: 1px solid var(--ink); color: var(--ink);
+    font-family: var(--font-ui); font-size: .64rem; letter-spacing: .24em; text-transform: uppercase;
+    transition: background .3s, color .3s;
+  }
+  .abtn:hover { background: var(--ink); color: var(--ivory); }
+
+  /* ---------- Title ---------- */
+  .atitle { text-align: center; padding: calc(var(--header-h) + clamp(56px, 8vw, 112px)) 0 clamp(56px, 7vw, 96px); }
+  .atitle h1 { margin: 0 0 clamp(28px, 4vw, 44px); font-size: clamp(2.4rem, 4.6vw, 3.8rem); line-height: 1; color: var(--ink); }
+  .atitle p { max-width: 60ch; margin: 0 auto; color: var(--charcoal); font-size: 1rem; line-height: 1.95; }
+
+  /* ---------- Side by side ---------- */
+  .aside { padding-block: clamp(40px, 6vw, 80px); }
+  .aside__grid { display: grid; grid-template-columns: 2fr 1fr; gap: clamp(36px, 6vw, 96px); align-items: center; }
+  .aside__media { aspect-ratio: 766 / 473; overflow: hidden; background: var(--stone); }
+  .aside__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .aside__text h2 { font-size: clamp(1.6rem, 2.4vw, 2.1rem); margin-bottom: 18px; }
+  .aside__text p { color: var(--charcoal); line-height: 1.95; margin: 0; }
+  @media (max-width: 900px) {
+    .aside__grid { grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Themes: photo stage beside a numbered list ---------- */
+  .atheme { padding-block: clamp(72px, 9vw, 128px); scroll-margin-top: var(--header-h); }
+  .atheme--flip { background: var(--sand); }
+  .atheme__head { display: grid; grid-template-columns: auto 1fr; gap: 8px clamp(24px, 4vw, 64px); margin-bottom: clamp(40px, 5vw, 64px); }
+  .atheme__count { grid-row: span 2; padding-top: 14px; font-family: var(--font-ui); font-size: .64rem; letter-spacing: .26em; color: var(--gold-deep); }
+  .atheme__head h2 { margin: 0; font-size: clamp(2rem, 3.6vw, 3.2rem); }
+  .atheme__head p { margin: 0; max-width: 60ch; color: var(--muted); line-height: 1.85; }
+
+  .atheme__grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(36px, 6vw, 96px); align-items: center; }
+  .atheme--flip .astage { order: 2; }
+
+  .astage { position: relative; aspect-ratio: 5 / 4; overflow: hidden; background: var(--stone); }
+  .astage__slide { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1s var(--ease); }
+  .astage__slide.is-active { opacity: 1; }
+  .astage__slide :global(img) { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 6s var(--ease-out); }
+  .astage__slide.is-active :global(img) { transform: scale(1); }
+  .astage__slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(15, 14, 12, .6), transparent 45%); }
+  .astage__slide figcaption {
+    position: absolute; left: clamp(20px, 3vw, 36px); bottom: clamp(24px, 3vw, 40px); z-index: 1;
+    font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 2.1rem); color: var(--ivory);
+  }
+  .astage__slide figcaption span { display: block; margin-bottom: 6px; font-family: var(--font-ui); font-size: .6rem; letter-spacing: .26em; text-transform: uppercase; color: var(--gold-soft); }
+  .astage__bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 3px; background: rgba(255, 255, 255, .2); }
+  .astage__bar span { display: block; height: 100%; width: 0; background: var(--gold); }
+
+  .alist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--stone); }
+  .alist__item { border-bottom: 1px solid var(--stone); scroll-margin-top: calc(var(--header-h) + 32px); }
+  .alist__item button {
+    width: 100%; display: grid; grid-template-columns: 44px 1fr; align-items: baseline; gap: 12px;
+    padding: 20px 0; background: none; border: 0; text-align: left; cursor: pointer; color: inherit;
+  }
+  .alist__num { font-family: var(--font-ui); font-size: .64rem; letter-spacing: .14em; color: var(--muted); transition: color .3s; }
+  .alist__name { font-family: var(--font-display); font-size: clamp(1.25rem, 1.8vw, 1.6rem); line-height: 1.15; color: #a39d91; transition: color .4s, transform .5s var(--ease); }
+  .alist__name small { display: block; margin-top: 4px; font-style: italic; font-size: .95rem; color: var(--gold-deep); }
+  .alist__item button:hover .alist__name { color: var(--charcoal); }
+  .alist__item.is-open .alist__name { color: var(--ink); transform: translateX(4px); }
+  .alist__item.is-open .alist__num { color: var(--gold-deep); }
+  .alist__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--ease); }
+  .alist__item.is-open .alist__panel { grid-template-rows: 1fr; }
+  .alist__inner { min-height: 0; overflow: hidden; padding-left: 56px; }
+  .alist__inner p { margin: 0 0 12px; font-size: .86rem; line-height: 1.85; color: var(--muted); }
+  .alist__dist { display: block; margin-bottom: 22px; font-size: .6rem; letter-spacing: .24em; text-transform: uppercase; color: var(--gold-deep); }
+  .alist__img { display: none; }
+  @media (max-width: 900px) {
+    .atheme__head { grid-template-columns: 1fr; }
+    .atheme__count { grid-row: auto; padding-top: 0; }
+    .atheme__grid { grid-template-columns: 1fr; }
+    .astage { display: none; }
+    .alist__inner { padding-left: 0; }
+    .alist__img { display: block; aspect-ratio: 4 / 3; overflow: hidden; margin-bottom: 16px; }
+    .alist__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  }
+</style>
+
+<script>
+  // Theme explorers: one place open at a time and the photo crossfades to match. Each advances on its
+  // own while on screen (the gold bar shows the timing), pauses while hovered or touched, and loops.
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DELAY = 5000;
+  document.querySelectorAll<HTMLElement>('[data-explorer]').forEach((root) => {
+    const items = [...root.querySelectorAll<HTMLElement>('[data-item]')];
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const bar = root.querySelector<HTMLElement>('[data-bar]')!;
+    let current = 0;
+    let visible = false;
+    let paused = false;
+    let timer: number | undefined;
+
+    const running = () => !still && visible && !paused;
+    const schedule = () => {
+      clearTimeout(timer);
+      bar.style.transition = 'none';
+      bar.style.width = '0';
+      if (!running()) return;
+      void bar.offsetWidth;
+      bar.style.transition = `width ${DELAY}ms linear`;
+      bar.style.width = '100%';
+      timer = window.setTimeout(() => activate((current + 1) % items.length), DELAY);
+    };
+    const activate = (i: number) => {
+      current = i;
+      items.forEach((item, n) => {
+        item.classList.toggle('is-open', n === i);
+        item.querySelector('button')!.setAttribute('aria-expanded', String(n === i));
+      });
+      slides.forEach((s) => s.classList.toggle('is-active', Number(s.dataset.slide) === i));
+      schedule();
+    };
+
+    items.forEach((item, i) => item.querySelector('button')!.addEventListener('click', () => activate(i)));
+    ['mouseenter', 'focusin', 'touchstart'].forEach((e) => root.addEventListener(e, () => { paused = true; schedule(); }, { passive: true }));
+    ['mouseleave', 'focusout'].forEach((e) => root.addEventListener(e, () => { paused = false; schedule(); }, { passive: true }));
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: 0.4 }).observe(root);
+
+    // Opening a #place link shows that place.
+    const fromHash = items.findIndex((item) => `#${item.id}` === location.hash);
+    if (fromHash > 0) activate(fromHash);
+  });
+</script>

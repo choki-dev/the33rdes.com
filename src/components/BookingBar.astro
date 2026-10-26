@@ -1,0 +1,197 @@
+---
+interface Props { variant?: 'hero' | 'inline' }
+const { variant = 'hero' } = Astro.props;
+const steppers = [
+  { key: 'adults', label: 'Adults', hint: 'Ages 12+', min: 1, max: 10 },
+  { key: 'children', label: 'Children', hint: 'Ages 0–11', min: 0, max: 6 },
+  { key: 'rooms', label: 'Rooms', hint: 'Up to 5 online', min: 1, max: 5 },
+];
+---
+<form class:list={['bbar', `bbar--${variant}`]} action="/availability" method="get" autocomplete="off" data-booking-bar>
+  <div class="bbar__field bbar__dates" data-open="dates" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Choose dates">
+    <div class="bbar__date">
+      <span class="label">Arrival</span>
+      <div class="bbar__value"><strong data-ci-day>—</strong><span><em data-ci-month>Select</em><small data-ci-week></small></span></div>
+    </div>
+    <div class="bbar__date">
+      <span class="label">Departure</span>
+      <div class="bbar__value"><strong data-co-day>—</strong><span><em data-co-month>Select</em><small data-co-week></small></span></div>
+    </div>
+  </div>
+
+  <div class="bbar__field bbar__guests" data-open="guests" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Choose guests and rooms">
+    <span class="label">Guests &amp; Rooms</span>
+    <div class="bbar__value bbar__value--text" data-guests-summary>2 Adults · 1 Room</div>
+  </div>
+
+  <button class="btn bbar__submit" type="submit">Check availability</button>
+
+  <input type="hidden" name="checkin" />
+  <input type="hidden" name="checkout" />
+  <input type="hidden" name="adults" value="2" />
+  <input type="hidden" name="children" value="0" />
+  <input type="hidden" name="rooms" value="1" />
+
+  <div class="bbar__pop bbar__pop--dates" data-pop="dates" hidden><div data-calendar></div></div>
+  <div class="bbar__pop bbar__pop--guests" data-pop="guests" hidden>
+    {steppers.map((s) => (
+      <div class="stepper" data-stepper={s.key} data-min={s.min} data-max={s.max}>
+        <div><strong>{s.label}</strong><small>{s.hint}</small></div>
+        <div class="stepper__ctrl">
+          <button type="button" data-step="-1" aria-label={`Fewer ${s.label.toLowerCase()}`}>−</button>
+          <output></output>
+          <button type="button" data-step="1" aria-label={`More ${s.label.toLowerCase()}`}>+</button>
+        </div>
+      </div>
+    ))}
+    <button type="button" class="btn btn--dark btn--block" data-close-pop>Done</button>
+  </div>
+</form>
+
+<style>
+  .bbar {
+    position: relative; display: grid; grid-template-columns: 1.7fr 1fr auto; align-items: stretch;
+    background: rgba(250, 247, 241, .97); color: var(--ink);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .45);
+  }
+  .bbar--inline { background: var(--white); border: 1px solid var(--stone); box-shadow: none; }
+  .bbar__field {
+    position: relative; padding: 20px 28px; cursor: pointer; outline-offset: -2px;
+    border-right: 1px solid var(--stone); transition: background .3s;
+  }
+  .bbar__field:hover { background: var(--white); }
+  .bbar__dates { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 16px; }
+  .bbar__value { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .bbar__value strong { font-family: var(--font-display); font-weight: 400; font-size: 2.6rem; line-height: 1; color: var(--ink); }
+  .bbar__value span { display: flex; flex-direction: column; line-height: 1.25; }
+  .bbar__value em { font-style: normal; font-family: var(--font-ui); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
+  .bbar__value small { font-size: .78rem; color: var(--muted); }
+  .bbar__value--text { font-family: var(--font-display); font-size: 1.45rem; min-height: 2.6rem; }
+  .bbar__submit { min-height: auto; height: auto; padding: 0 40px; border-radius: 0; }
+
+  .bbar__pop { position: absolute; top: calc(100% + 10px); z-index: 30; }
+  .bbar--hero .bbar__pop { top: auto; bottom: calc(100% + 10px); }
+  .bbar__pop--dates { left: 0; }
+  .bbar__pop--guests {
+    left: calc(1.7 / 3.7 * 100%); width: 340px; background: var(--white); padding: 24px;
+    box-shadow: 0 30px 80px -20px rgba(29, 28, 26, .35); border: 1px solid var(--stone);
+    display: grid; gap: 18px;
+  }
+  .bbar__pop[hidden] { display: none; }
+
+  @media (max-width: 960px) {
+    .bbar { grid-template-columns: 1fr 1fr; }
+    .bbar__dates { grid-column: 1 / -1; border-right: 0; border-bottom: 1px solid var(--stone); }
+    .bbar__submit { min-height: 64px; }
+    .bbar__pop--guests { left: 0; }
+    .bbar--hero .bbar__pop { bottom: auto; top: calc(100% + 10px); }
+  }
+  @media (max-width: 560px) {
+    .bbar { grid-template-columns: 1fr; }
+    .bbar__guests { border-right: 0; border-bottom: 1px solid var(--stone); }
+    .bbar__field { padding: 16px 20px; }
+    .bbar__value strong { font-size: 2.1rem; }
+    .bbar__pop--dates, .bbar__pop--guests { left: 0; right: 0; width: auto; }
+  }
+</style>
+
+<script>
+  import { createRangePicker, formatParts } from '../lib/datepicker';
+  import { availabilityUrl, readStayParams } from '../lib/stay-params';
+
+  document.querySelectorAll<HTMLFormElement>('[data-booking-bar]').forEach((form) => {
+    const input = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
+    const pops = form.querySelectorAll<HTMLElement>('[data-pop]');
+    const close = () => pops.forEach((p) => (p.hidden = true));
+    const toggle = (name: string) => pops.forEach((p) => (p.hidden = p.dataset.pop !== name ? true : !p.hidden));
+
+    const paint = () => {
+      for (const [prefix, name] of [['ci', 'checkin'], ['co', 'checkout']] as const) {
+        const parts = formatParts(input(name).value || null);
+        form.querySelector(`[data-${prefix}-day]`)!.textContent = parts.day;
+        form.querySelector(`[data-${prefix}-month]`)!.textContent = parts.month;
+        form.querySelector(`[data-${prefix}-week]`)!.textContent = parts.weekday;
+      }
+      const a = Number(input('adults').value);
+      const c = Number(input('children').value);
+      const r = Number(input('rooms').value);
+      form.querySelector('[data-guests-summary]')!.textContent =
+        `${a} Adult${a > 1 ? 's' : ''}${c ? ` · ${c} Child${c > 1 ? 'ren' : ''}` : ''} · ${r} Room${r > 1 ? 's' : ''}`;
+      form.querySelectorAll<HTMLElement>('[data-stepper]').forEach((s) => {
+        const v = Number(input(s.dataset.stepper!).value);
+        s.querySelector('output')!.textContent = String(v);
+        s.querySelector<HTMLButtonElement>('[data-step="-1"]')!.disabled = v <= Number(s.dataset.min);
+        s.querySelector<HTMLButtonElement>('[data-step="1"]')!.disabled = v >= Number(s.dataset.max);
+      });
+    };
+
+    // Start from the stay in the URL (e.g. on /availability). Otherwise reset on every load — dates stay
+    // empty until chosen, and a refresh never brings back an earlier choice the browser remembered.
+    const fromUrl = readStayParams(location.search);
+    input('checkin').value = fromUrl.checkIn ?? '';
+    input('checkout').value = (fromUrl.checkIn && fromUrl.checkOut) || '';
+    form.querySelectorAll<HTMLElement>('[data-stepper]').forEach((s) => {
+      const key = s.dataset.stepper as 'adults' | 'children' | 'rooms';
+      const v = fromUrl[key] ?? Number(input(key).defaultValue);
+      input(key).value = String(Math.min(Number(s.dataset.max), Math.max(Number(s.dataset.min), v)));
+    });
+
+    createRangePicker({
+      root: form.querySelector<HTMLElement>('[data-calendar]')!,
+      initial: { start: input('checkin').value || null, end: input('checkout').value || null },
+      onChange: ({ start, end }) => {
+        input('checkin').value = start ?? '';
+        input('checkout').value = end ?? '';
+        paint();
+      },
+      onComplete: () => setTimeout(close, 250),
+    });
+
+    form.querySelectorAll<HTMLElement>('[data-open]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle(el.dataset.open!);
+      });
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle(el.dataset.open!);
+        }
+      });
+    });
+    pops.forEach((p) => p.addEventListener('click', (e) => e.stopPropagation()));
+    form.querySelector('[data-close-pop]')!.addEventListener('click', close);
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+
+    form.querySelectorAll<HTMLElement>('[data-stepper]').forEach((s) => {
+      s.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-step]');
+        if (!btn) return;
+        const field = input(s.dataset.stepper!);
+        const next = Number(field.value) + Number(btn.dataset.step);
+        field.value = String(Math.min(Number(s.dataset.max), Math.max(Number(s.dataset.min), next)));
+        paint();
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      if (!input('checkin').value || !input('checkout').value) {
+        e.preventDefault();
+        toggle('dates');
+        return;
+      }
+      // Opens the room list for these dates, e.g. /availability/?dates=22/10/2026 to 24/10/2026&adults=2…
+      e.preventDefault();
+      location.href = availabilityUrl({
+        checkIn: input('checkin').value,
+        checkOut: input('checkout').value,
+        adults: Number(input('adults').value),
+        children: Number(input('children').value),
+        rooms: Number(input('rooms').value),
+      });
+    });
+
+    paint();
+  });
+</script>

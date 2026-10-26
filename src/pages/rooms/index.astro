@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { roomAmenities, rooms } from '../../data/site';
+import { img } from '../../lib/images';
+---
+<Base title="Rooms & Suites" description="Valley Suites, Executive Suites, Deluxe Suites, Deluxe Premium and Deluxe Standard rooms at The 33rd Executive Suites, Thimphu — each with a mini kitchen, bathtub and premium amenities.">
+  <PageHero
+    image={img('deluxe-4')}
+    eyebrow="Rooms"
+    title="Rooms &amp; <em>Suites</em>"
+    subtitle="Sixty-eight rooms across two towers, designed for unhurried comfort — with a mini kitchen, bathtub and thoughtful amenities in every one."
+  />
+
+  <section class="section">
+    <div class="container rooms">
+      {rooms.map((room, i) => (
+        <article class:list={['room', { 'room--flip': i % 2 === 1 }]}>
+          <a href={`/rooms/${room.slug}`} class="room__media media reveal" aria-label={room.name}>
+            <Image src={img(room.hero)} alt={room.name} widths={[600, 1000, 1400]} sizes="(max-width: 900px) 100vw, 58vw" />
+          </a>
+          <div class="room__text reveal reveal-delay-1">
+            <span class="eyebrow">{room.view}</span>
+            <h2>{room.name}</h2>
+            {room.tagline && <p class="room__tag">{room.tagline}</p>}
+            <p>{room.description}</p>
+            <ul class="room__facts">
+              <li><Icon name="size" size={18} /><span><small>Size</small>{room.size}</span></li>
+              <li><Icon name="bed" size={18} /><span><small>Bed</small>{room.bed}</span></li>
+              <li><Icon name="user" size={18} /><span><small>Sleeps</small>{room.capacity} guests</span></li>
+            </ul>
+            <div class="room__actions">
+              <a class="btn" href={`/book?room=${room.slug}`}>Book now</a>
+              <a class="link-arrow" href={`/rooms/${room.slug}`}>Details <Icon name="arrow" /></a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="container container--narrow center reveal">
+      <span class="eyebrow eyebrow--center">In every room</span>
+      <h2>Amenities &amp; <em>comforts</em></h2>
+    </div>
+    <div class="container">
+      <ul class="amenities reveal">
+        {roomAmenities.map((a) => <li><Icon name="check" size={18} />{a}</li>)}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .rooms { display: grid; gap: clamp(80px, 11vw, 150px); }
+  .room { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+  .room--flip .room__media { order: 2; }
+  .room__media { aspect-ratio: 4 / 3; }
+  .room h2 { margin-bottom: 4px; }
+  .room__tag { font-family: var(--font-display); font-size: var(--fs-detail); color: var(--gold-deep); }
+  .room__text > p:not(.room__tag) { color: var(--muted); }
+  .room__facts { list-style: none; padding: 24px 0; margin: 8px 0 32px; display: flex; flex-wrap: wrap; gap: 20px 36px; border-block: 1px solid var(--stone); }
+  .room__facts li { display: flex; gap: 12px; align-items: center; }
+  .room__facts :global(svg) { color: var(--gold); }
+  .room__facts span { display: flex; flex-direction: column; line-height: 1.3; font-family: var(--font-display); font-size: var(--fs-detail); color: var(--ink); }
+  .room__facts small { font-family: var(--font-ui); font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+  .room__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 32px; }
+  @media (max-width: 900px) {
+    .room { grid-template-columns: 1fr; }
+    .room--flip .room__media { order: 0; }
+  }
+  .amenities {
+    list-style: none; padding: 0; margin: 48px 0 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px;
+  }
+  .amenities li { display: flex; align-items: center; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--stone); }
+  .amenities :global(svg) { color: var(--gold); flex: none; }
+  @media (max-width: 900px) { .amenities { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .amenities { grid-template-columns: 1fr; } }
+</style>

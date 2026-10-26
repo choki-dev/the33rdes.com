@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Lightbox from '../components/Lightbox.astro';
+import Filmstrip from '../components/Filmstrip.astro';
+import { img } from '../lib/images';
+
+const groups = [
+  { id: 'rooms', label: 'Rooms', title: 'Rooms &amp; <em>suites</em>', items: ['deluxe-4', 'valley-1', 'exec-4', 'exec-1', 'deluxe-3', 'about-1', 'exec-2', 'gallery-1', 'deluxe-1'] },
+  { id: 'dining', label: 'Dining', title: 'Pure vegetarian <em>dining</em>', items: ['dining-4', 'dining-5', 'dining-6', 'dining-3', 'food-thali', 'food-zheycha', 'spa-1', 'food-salad', 'dining-1', 'food-mango', 'dining-2', 'food-burger', 'food-cheesecake'] },
+  { id: 'cafe', label: 'Sugar Box Café', title: 'Sugar Box <em>Café</em>', items: ['home-1', 'cafe-3', 'gallery-4', 'cafe-1', 'gallery-3', 'cafe-2', 'gallery-5'] },
+  { id: 'spaces', label: 'Spaces', title: 'Lounges &amp; <em>spaces</em>', items: ['lobby-2', 'lobby-1', 'lobby-3', 'about-2', 'gallery-2', 'board-6', 'board-3', 'board-5', 'spa-2', 'board-1', 'gym-1', 'gym-3', 'home-2', 'spa-3', 'home-3'] },
+];
+---
+<Base title="Gallery" description="Photographs of the rooms, dining, café and spaces at The 33rd Executive Suites, Thimphu.">
+  <PageHero image={img('gallery-2')} eyebrow="Gallery" title="Moments at <em>The 33rd</em>" short />
+
+  <nav class="jump" aria-label="Gallery sections">
+    <div class="container jump__inner">
+      {groups.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
+    </div>
+  </nav>
+
+  {groups.map((g, i) => (
+    <Filmstrip images={g.items} caption={g.label} eyebrow={g.label} title={g.title} id={g.id} tone={i % 2 === 0 ? 'white' : 'sand'} />
+  ))}
+
+  <Lightbox />
+</Base>
+
+<style>
+  .jump { background: var(--white); border-bottom: 1px solid var(--stone); }
+  .jump__inner { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 36px; padding-block: 22px; }
+  .jump a {
+    padding: 6px 0; border-bottom: 1px solid transparent;
+    font-family: var(--font-ui); font-size: .7rem; letter-spacing: .24em; text-transform: uppercase; color: var(--muted);
+    transition: color .3s, border-color .3s;
+  }
+  .jump a:hover { color: var(--ink); border-color: var(--gold); }
+</style>

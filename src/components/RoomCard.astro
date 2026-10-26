@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { Room } from '../data/site';
+import { img } from '../lib/images';
+
+interface Props { room: Room; index?: number }
+const { room, index = 0 } = Astro.props;
+---
+<article class:list={['rcard reveal', `reveal-delay-${index % 3}`]}>
+  <a href={`/rooms/${room.slug}`} class="rcard__media media" aria-label={room.name}>
+    <Image src={img(room.hero)} alt={`${room.name} at The 33rd Executive Suites`} widths={[480, 720, 960]} sizes="(max-width: 760px) 100vw, 33vw" />
+    {room.highlight && <span class="rcard__badge">{room.highlight}</span>}
+  </a>
+  <div class="rcard__body">
+    <h3><a href={`/rooms/${room.slug}`}>{room.name}</a></h3>
+    <ul class="rcard__meta">
+      <li><Icon name="size" size={16} />{room.size}</li>
+      <li><Icon name="bed" size={16} />{room.bed}</li>
+      <li><Icon name="user" size={16} />{room.capacity} guests</li>
+    </ul>
+    <div class="rcard__foot">
+      <a class="link-arrow" href={`/rooms/${room.slug}`}>Discover</a>
+      <a class="link-arrow" href={`/book?room=${room.slug}`}>Book <Icon name="arrow" /></a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .rcard { display: flex; flex-direction: column; background: var(--white); }
+  .rcard__media { aspect-ratio: 4 / 5; }
+  .rcard__badge {
+    position: absolute; left: 20px; top: 20px; padding: 8px 14px; background: rgba(250, 247, 241, .94);
+    font-family: var(--font-ui); font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--ink);
+  }
+  .rcard__body { position: relative; padding: 32px 32px 28px; flex: 1; display: flex; flex-direction: column; }
+  .rcard h3 { margin-bottom: 16px; font-size: var(--fs-card); }
+  .rcard h3 a { transition: color .3s; }
+  .rcard h3 a:hover { color: var(--gold-deep); }
+  .rcard__meta { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: var(--fs-small); color: var(--muted); }
+  .rcard__meta li { display: inline-flex; align-items: center; gap: 8px; }
+  .rcard__meta :global(svg) { color: var(--gold); }
+  .rcard__foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 20px; border-top: 1px solid var(--stone); }
+</style>

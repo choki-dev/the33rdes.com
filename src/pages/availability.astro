@@ -1,0 +1,206 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import BookingBar from '../components/BookingBar.astro';
+import Icon from '../components/Icon.astro';
+import { rooms, site } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base title="Check Availability" description="Check room availability at The 33rd Executive Suites, Thimphu — choose your dates and guests, then book online or reserve on WhatsApp." overlayHeader={false}>
+  <section class="avail" data-avail data-wa={site.whatsappHref}>
+    <div class="container">
+      <header class="avail__head">
+        <span class="eyebrow">Reservations</span>
+        <h1>Check <em>availability</em></h1>
+        <p>Choose your dates and guests, compare our rooms and suites, then book online or reserve now on WhatsApp.</p>
+      </header>
+
+      <div class="avail__search">
+        <h2 class="label">Your stay details</h2>
+        <BookingBar variant="inline" />
+      </div>
+
+      <div class="avail__results">
+        <header class="avail__summary">
+          <h2>Rooms for your stay</h2>
+          <p data-summary>—</p>
+        </header>
+
+        <div class="notice notice--error" role="alert" hidden data-notice></div>
+
+        <div class="avail__list">
+          {rooms.map((room) => (
+            <article class="aroom" data-room={room.slug} data-name={room.name} data-capacity={room.capacity}>
+              <a class="aroom__media media" href={`/rooms/${room.slug}`} aria-label={room.name}>
+                <Image src={img(room.hero)} alt={room.name} widths={[500, 800]} sizes="(max-width: 800px) 100vw, 380px" />
+              </a>
+              <div class="aroom__body">
+                <h3><a href={`/rooms/${room.slug}`}>{room.name}</a></h3>
+                {room.tagline && <p class="aroom__tagline">{room.tagline}</p>}
+                <ul class="aroom__meta">
+                  <li><Icon name="size" size={15} />{room.size}</li>
+                  <li><Icon name="bed" size={15} />{room.bed}</li>
+                  <li><Icon name="view" size={15} />{room.view}</li>
+                  <li><Icon name="user" size={15} />Sleeps {room.capacity}</li>
+                </ul>
+                <p class="aroom__status" data-status></p>
+              </div>
+              <div class="aroom__aside">
+                <div class="aroom__rate">
+                  <span class="label">Rate</span>
+                  <strong>On request</strong>
+                  <small>Best available rate confirmed by our team</small>
+                </div>
+                <a class="btn btn--block" href={`/book?room=${room.slug}`} data-book>Book now</a>
+                <a class="btn btn--outline btn--block" href={site.whatsappHref} target="_blank" rel="noopener" data-whatsapp>
+                  <Icon name="whatsapp" size={15} /> Reserve now
+                </a>
+              </div>
+            </article>
+          ))}
+
+          <article class="aroom aroom--event">
+            <div class="aroom__body">
+              <span class="label">Meetings &amp; events</span>
+              <h3><a href="/experiences/the-boardroom">The Boardroom</a></h3>
+              <p class="aroom__tagline">A versatile conference space for up to 100 guests.</p>
+            </div>
+            <div class="aroom__aside">
+              <a class="btn btn--outline btn--block" href="/experiences/the-boardroom#reserve">Enquire now</a>
+            </div>
+          </article>
+        </div>
+
+        <p class="avail__note">No payment is taken online. Our reservations team will confirm availability and send you our best rate. Questions? Call <a href={site.phoneHref}>{site.phone}</a> or email <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .avail { padding-top: calc(var(--header-h) + clamp(40px, 6vw, 80px)); padding-bottom: var(--section); background: var(--sand); }
+  .avail__head { max-width: 640px; margin-bottom: clamp(28px, 4vw, 44px); }
+  .avail__head h1 { margin-bottom: 12px; }
+  .avail__head p { color: var(--muted); margin: 0; }
+
+  .avail__search { margin-bottom: clamp(48px, 6vw, 72px); }
+  .avail__search .label { display: block; margin: 0 0 12px; }
+
+  .avail__summary { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; padding-bottom: 18px; margin-bottom: 24px; border-bottom: 1px solid var(--stone); }
+  .avail__summary h2 { margin: 0; }
+  .avail__summary p { margin: 0; font-family: var(--font-ui); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-deep); }
+
+  .avail__list { display: grid; gap: 18px; }
+  .aroom { display: grid; grid-template-columns: 340px 1fr 260px; background: var(--white); }
+  .aroom__media { min-height: 240px; }
+  .aroom__body { padding: clamp(24px, 3vw, 36px); }
+  .aroom__body h3 { margin-bottom: 6px; }
+  .aroom__body h3 a:hover { color: var(--gold-deep); }
+  .aroom__tagline { color: var(--muted); margin-bottom: 16px; }
+  .aroom__meta { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .8rem; }
+  .aroom__meta li { display: inline-flex; align-items: center; gap: 8px; }
+  .aroom__meta :global(svg) { color: var(--gold); }
+  .aroom__status { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: .8rem; color: #3f6a3a; }
+  .aroom__status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .aroom__status.is-warn { color: #8a5a1c; }
+  .aroom__status:empty { display: none; }
+  .aroom__aside { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: clamp(24px, 3vw, 32px); border-left: 1px solid var(--sand); }
+  .aroom__rate { margin-bottom: 8px; }
+  .aroom__rate strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; color: var(--ink); line-height: 1.2; }
+  .aroom__rate small { color: var(--muted); font-size: .74rem; }
+  .aroom .btn { padding: 0 16px; }
+  .aroom.is-disabled .btn { opacity: .5; pointer-events: none; }
+  .aroom--event { grid-template-columns: 1fr 260px; }
+  .aroom--event .label { display: block; margin-bottom: 6px; }
+  .aroom--event .aroom__tagline { margin: 0; }
+
+  .avail__note { margin: 28px 0 0; font-size: .82rem; color: var(--muted); }
+  .avail__note a { color: var(--gold-deep); border-bottom: 1px solid currentColor; }
+
+  @media (max-width: 1000px) {
+    .aroom { grid-template-columns: 280px 1fr; }
+    .aroom__aside { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; border-left: 0; border-top: 1px solid var(--sand); }
+    .aroom__rate { flex: 1 1 100%; margin: 0; }
+    .aroom__aside .btn { flex: 1 1 200px; width: auto; }
+    .aroom--event { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .aroom { grid-template-columns: 1fr; }
+    .aroom__media { aspect-ratio: 4 / 3; min-height: 0; }
+  }
+</style>
+
+<script>
+  import { formatLong } from '../lib/datepicker';
+  import { bookUrl, readStayParams } from '../lib/stay-params';
+  import { nightsBetween, validateStay } from '../lib/stay';
+  import { policies } from '../data/site';
+
+  const root = document.querySelector<HTMLElement>('[data-avail]');
+  const fromUrl = readStayParams(location.search);
+  // Without dates, ask for them rather than guessing; the room cards keep their plain links.
+  if (root && !(fromUrl.checkIn && fromUrl.checkOut)) {
+    root.querySelector('[data-summary]')!.textContent = 'Choose your arrival and departure dates above';
+  } else if (root) {
+    const stay = {
+      checkIn: fromUrl.checkIn!,
+      checkOut: fromUrl.checkOut!,
+      adults: Math.max(1, fromUrl.adults ?? 2),
+      children: fromUrl.children ?? 0,
+      rooms: Math.min(policies.maxRooms, Math.max(1, fromUrl.rooms ?? 1)),
+    };
+    const nights = nightsBetween(stay.checkIn, stay.checkOut);
+    const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+    root.querySelector('[data-summary]')!.textContent = [
+      `${plural(stay.adults, 'Adult')}, ${plural(stay.children, 'Child', 'Children')}`,
+      plural(stay.rooms, 'Room'),
+      plural(Math.max(nights, 0), 'Night'),
+      nights > 0 ? `${formatLong(stay.checkIn)} – ${formatLong(stay.checkOut)}` : '',
+    ].filter(Boolean).join(' · ');
+
+    const notice = root.querySelector<HTMLElement>('[data-notice]')!;
+    const showNotice = (msg: string) => {
+      notice.textContent = msg;
+      notice.hidden = false;
+    };
+    const wa = root.dataset.wa!;
+
+    root.querySelectorAll<HTMLElement>('[data-room]').forEach((card) => {
+      const slug = card.dataset.room!;
+      const name = card.dataset.name!;
+      const capacity = Number(card.dataset.capacity);
+      // Children share with parents; adults set how many rooms are needed.
+      const needed = Math.max(stay.rooms, Math.ceil(stay.adults / capacity));
+      const forRoom = { ...stay, rooms: needed };
+      const status = card.querySelector<HTMLElement>('[data-status]')!;
+
+      const error = validateStay({ ...forRoom, roomSlug: slug, addons: [] });
+      if (error) {
+        card.classList.add('is-disabled');
+        if (notice.hidden) showNotice(needed > policies.maxRooms ? `Online requests are limited to ${policies.maxRooms} rooms. For groups, please contact us.` : error);
+        return;
+      }
+
+      if (needed > stay.rooms) {
+        status.textContent = `Sleeps ${capacity} adults per room — ${needed} rooms needed for ${stay.adults} adults`;
+        status.classList.add('is-warn');
+      } else {
+        status.textContent = `Suits ${plural(stay.adults, 'adult')}${stay.children ? ` and ${plural(stay.children, 'child', 'children')}` : ''} in ${plural(needed, 'room')}`;
+      }
+
+      card.querySelector<HTMLAnchorElement>('[data-book]')!.href = bookUrl(forRoom, slug);
+
+      const message = [
+        'Hello, I would like to reserve at The 33rd Executive Suites.',
+        `Room type: ${name}`,
+        `Arrival: ${formatLong(stay.checkIn)}`,
+        `Departure: ${formatLong(stay.checkOut)}`,
+        `Nights: ${nights}`,
+        `Rooms: ${needed}`,
+        `Guests: ${plural(stay.adults, 'adult')}, ${plural(stay.children, 'child', 'children')}`,
+      ].join('\n');
+      card.querySelector<HTMLAnchorElement>('[data-whatsapp]')!.href = `${wa}?text=${encodeURIComponent(message)}`;
+    });
+  }
+</script>

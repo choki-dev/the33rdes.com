@@ -1,0 +1,73 @@
+---
+// Full-screen viewer for any <a data-lightbox href="large.jpg"> on the page.
+---
+<div class="lb" hidden data-lb role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="lb__btn lb__close" type="button" data-lb-close aria-label="Close">&#10005;</button>
+  <button class="lb__btn lb__prev" type="button" data-lb-step="-1" aria-label="Previous image">&#8592;</button>
+  <figure class="lb__figure">
+    <img alt="" data-lb-img />
+    <figcaption data-lb-caption></figcaption>
+  </figure>
+  <button class="lb__btn lb__next" type="button" data-lb-step="1" aria-label="Next image">&#8594;</button>
+</div>
+
+<style>
+  .lb { position: fixed; inset: 0; z-index: 300; background: rgba(18, 17, 15, .96); display: grid; place-items: center; }
+  .lb[hidden] { display: none; }
+  .lb__figure { margin: 0; max-width: min(92vw, 1600px); text-align: center; }
+  .lb__figure img { max-height: 84vh; width: auto; margin: 0 auto; box-shadow: 0 30px 80px rgba(0, 0, 0, .5); }
+  .lb__figure figcaption { margin-top: 16px; color: var(--gold-soft); font-family: var(--font-ui); font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; }
+  .lb__btn {
+    position: absolute; width: 52px; height: 52px; border-radius: 50%;
+    border: 1px solid rgba(216, 199, 156, .4); background: none; color: var(--ivory); cursor: pointer; font-size: 1.1rem;
+  }
+  .lb__btn:hover { background: var(--gold); border-color: var(--gold); }
+  .lb__close { top: 24px; right: 24px; }
+  .lb__prev { left: 24px; top: 50%; transform: translateY(-50%); }
+  .lb__next { right: 24px; top: 50%; transform: translateY(-50%); }
+  @media (max-width: 640px) {
+    .lb__prev, .lb__next { top: auto; bottom: 24px; transform: none; }
+  }
+</style>
+
+<script>
+  const lb = document.querySelector<HTMLElement>('[data-lb]')!;
+  const image = lb.querySelector<HTMLImageElement>('[data-lb-img]')!;
+  const caption = lb.querySelector<HTMLElement>('[data-lb-caption]')!;
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]')];
+  let index = 0;
+  let opener: HTMLElement | null = null;
+
+  const show = (i: number) => {
+    index = (i + links.length) % links.length;
+    const link = links[index];
+    image.src = link.href;
+    image.alt = link.dataset.caption ?? '';
+    caption.textContent = link.dataset.caption ?? `${index + 1} / ${links.length}`;
+  };
+  const close = () => {
+    lb.hidden = true;
+    document.body.classList.remove('is-locked');
+    opener?.focus();
+  };
+
+  links.forEach((link, i) =>
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      opener = link;
+      show(i);
+      lb.hidden = false;
+      document.body.classList.add('is-locked');
+      lb.querySelector<HTMLElement>('[data-lb-close]')!.focus();
+    }),
+  );
+  lb.querySelector('[data-lb-close]')!.addEventListener('click', close);
+  lb.querySelectorAll<HTMLElement>('[data-lb-step]').forEach((b) => b.addEventListener('click', () => show(index + Number(b.dataset.lbStep))));
+  lb.addEventListener('click', (e) => e.target === lb && close());
+  document.addEventListener('keydown', (e) => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') show(index - 1);
+    if (e.key === 'ArrowRight') show(index + 1);
+  });
+</script>

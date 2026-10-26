@@ -1,0 +1,209 @@
+---
+// Travel Guide: framed hero photograph, essentials as an accordion beside a photo, and the seasons
+// as portrait photographs.
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { img } from '../lib/images';
+
+const notes = [
+  {
+    title: 'Visa & entry',
+    body: [
+      'All visitors except Indian nationals need a visa, applied for online before travel and issued on arrival. Indian nationals receive an entry permit at the point of entry with a valid passport or voter ID card.',
+      'We are happy to help you with the paperwork — just ask when you book.',
+    ],
+  },
+  {
+    title: 'Sustainable Development Fee',
+    body: [
+      'Bhutan asks every visitor to contribute a daily Sustainable Development Fee, which funds free healthcare, education and the protection of the country’s forests. It is set by the Royal Government of Bhutan, with a separate rate for Indian nationals.',
+      'Rates can change, so please check the current fee with us or the Department of Tourism before you travel.',
+    ],
+  },
+  {
+    title: 'Flights & arrival',
+    body: [
+      'Paro International Airport is Bhutan’s gateway, served by Drukair and Bhutan Airlines from cities across South and Southeast Asia. From Paro it is about an hour’s drive along the valley road to Babesa, the first neighbourhood of Thimphu you reach.',
+      'We can meet you at arrivals with a private car.',
+    ],
+  },
+  {
+    title: 'Festivals',
+    body: [
+      'Thimphu Tshechu, the capital’s great masked-dance festival, is held each autumn in the courtyard of Tashichho Dzong. Festival dates follow the lunar calendar and change every year — ask us for this year’s dates and we will plan your stay around them.',
+    ],
+  },
+];
+
+const seasons = [
+  { title: 'Spring', months: 'March – May', text: 'mild days, blossom in the valley and rhododendrons on the high passes.' },
+  { title: 'Summer', months: 'June – August', text: 'monsoon showers, deep green hillsides and quieter trails.' },
+  { title: 'Autumn', months: 'September – November', text: 'clear skies, crisp air and festival season.' },
+  { title: 'Winter', months: 'December – February', text: 'sunny days, cold nights and the clearest mountain views.' },
+];
+
+const seasonImages: Record<string, string> = {
+  Spring: 'guide-changyul-park',
+  Summer: 'guide-JNDP',
+  Autumn: 'guide-tashichoedzong',
+  Winter: 'guide-buddha-point',
+};
+
+---
+<Base
+  title="Travel Guide"
+  description="Thimphu, Bhutan’s capital, from The 33rd Executive Suites in Babesa — visas, the Sustainable Development Fee, flights, festivals and when to visit."
+  overlayHeader={false}
+>
+  <!-- ============ HERO: framed photograph, title beneath ============ -->
+  <section class="fhero">
+    <div class="fhero__frame">
+      <Image src={img('guide-dochula')} alt="Chortens and prayer flags at Dochula Pass" widths={[800, 1400, 2000, 2600]} sizes="100vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="fhero__card">
+      <span class="fcap">Thimphu · Bhutan</span>
+      <h1>Travel <em>Guide</em></h1>
+      <p>Everything to know before you arrive in the valley.</p>
+    </div>
+  </section>
+
+  <!-- ============ ESSENTIALS: photograph + accordion ============ -->
+  <section class="fess" aria-labelledby="ess-title">
+    <div class="container fess__grid">
+      <div class="fess__media reveal">
+        <Image src={img('guide-chorten')} alt="The National Memorial Chorten in Thimphu" widths={[500, 800, 1100]} sizes="(max-width: 900px) 100vw, 42vw" />
+      </div>
+      <div class="fess__text reveal reveal-delay-1">
+        <span class="fcap">Before you go</span>
+        <h2 id="ess-title">The essentials</h2>
+        <div class="facc" data-acc>
+          {notes.map((n, i) => (
+            <div class:list={['facc__item', { 'is-open': i === 0 }]}>
+              <button type="button" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`ess-${i}`}>
+                <span>{n.title}</span>
+                <span class="facc__icon" aria-hidden="true"></span>
+              </button>
+              <div class="facc__panel" id={`ess-${i}`}>
+                <div class="facc__inner">
+                  {n.body.map((p) => <p>{p}</p>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SEASONS: four portrait photographs ============ -->
+  <section class="fseasons" aria-labelledby="seasons-title">
+    <div class="container">
+      <header class="fhead reveal">
+        <span class="fcap">When to visit</span>
+        <h2 id="seasons-title">A valley for every <em>season</em></h2>
+      </header>
+      <ul class="fseasons__grid">
+        {seasons.map((s, i) => (
+          <li class:list={['fseason reveal', `reveal-delay-${i}`]}>
+            <Image src={img(seasonImages[s.title])} alt="" widths={[400, 700]} sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 25vw" />
+            <div class="fseason__body">
+              <h3>{s.title}</h3>
+              <span>{s.months}</span>
+              <p>{s.text.charAt(0).toUpperCase() + s.text.slice(1)}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  .fcap { display: block; margin-bottom: 18px; font-family: var(--font-ui); font-size: .62rem; letter-spacing: .34em; text-transform: uppercase; color: var(--gold-deep); }
+  .fhead { text-align: center; max-width: 760px; margin: 0 auto clamp(48px, 6vw, 80px); }
+  .fhead h2, .fess__text h2 { margin: 0; font-weight: 400; font-size: clamp(2.1rem, 4vw, 3.4rem); line-height: 1.08; color: var(--ink); }
+  .fhead h2 em, .fhero h1 em { color: var(--gold-deep); font-style: italic; }
+  .fhead p { margin: 22px auto 0; max-width: 58ch; color: var(--muted); line-height: 1.9; }
+
+  /* ---------- Hero: photograph in an ivory frame, card overlapping its foot ---------- */
+  .fhero { background: var(--ivory); padding: calc(var(--header-h) + 20px) clamp(16px, 3vw, 40px) clamp(64px, 8vw, 104px); }
+  .fhero__frame { height: clamp(380px, 72vh, 780px); overflow: hidden; background: var(--stone); }
+  .fhero__frame :global(img) { width: 100%; height: 100%; object-fit: cover; animation: fzoom 18s var(--ease-out) both; }
+  .fhero__card {
+    position: relative; width: min(720px, calc(100% - 32px)); margin: clamp(-120px, -9vw, -64px) auto 0; padding: clamp(32px, 5vw, 56px) clamp(24px, 5vw, 64px);
+    background: var(--ivory); text-align: center; animation: frise 1.4s var(--ease-out) .3s both;
+  }
+  .fhero h1 { margin: 0 0 18px; font-weight: 400; font-size: clamp(2.8rem, 6.5vw, 5.6rem); line-height: 1; color: var(--ink); }
+  .fhero__card p { margin: 0 auto; max-width: 44ch; color: var(--muted); font-family: var(--font-display); font-style: italic; font-size: clamp(1.05rem, 1.5vw, 1.25rem); }
+  @keyframes fzoom { from { transform: scale(1.08); } to { transform: none; } }
+  @keyframes frise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Essentials ---------- */
+  .fess { background: var(--white); padding-block: clamp(88px, 11vw, 150px); }
+  .fess__grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 7vw, 120px); align-items: center; max-width: 1280px; }
+  .fess__media { aspect-ratio: 4 / 5; overflow: hidden; background: var(--stone); }
+  .fess__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .fess__text h2 { margin-bottom: clamp(28px, 4vw, 44px); }
+  .facc { border-top: 1px solid var(--stone); }
+  .facc__item { border-bottom: 1px solid var(--stone); }
+  .facc__item button {
+    width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 0;
+    background: none; border: 0; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: var(--font-display); font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+  }
+  .facc__item button:hover { color: var(--gold-deep); }
+  .facc__icon { position: relative; flex: none; width: 16px; height: 16px; }
+  .facc__icon::before, .facc__icon::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--gold); transition: transform .5s var(--ease); }
+  .facc__icon::after { transform: rotate(90deg); }
+  .facc__item.is-open .facc__icon::after { transform: rotate(0); }
+  .facc__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--ease); }
+  .facc__item.is-open .facc__panel { grid-template-rows: 1fr; }
+  .facc__inner { min-height: 0; overflow: hidden; }
+  .facc__inner p { color: var(--charcoal); line-height: 1.9; font-size: .92rem; max-width: 58ch; }
+  .facc__inner > :last-child { margin-bottom: 26px; }
+  @media (max-width: 900px) {
+    .fess__grid { grid-template-columns: 1fr; }
+    .fess__media { aspect-ratio: 4 / 3; }
+  }
+
+  /* ---------- Seasons ---------- */
+  .fseasons { background: var(--ivory); padding-block: clamp(88px, 11vw, 150px); }
+  .fseasons__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px, 1.6vw, 20px); }
+  .fseason { position: relative; aspect-ratio: 3 / 4.4; overflow: hidden; background: var(--ink); color: var(--ivory); }
+  .fseason :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease-out), opacity .6s; }
+  .fseason::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(15, 14, 12, .85), rgba(15, 14, 12, .05) 60%); }
+  .fseason:hover :global(img) { transform: scale(1.06); opacity: .8; }
+  .fseason__body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: clamp(20px, 2.4vw, 32px); }
+  .fseason h3 { margin: 0 0 4px; font-weight: 400; font-size: clamp(1.6rem, 2.2vw, 2rem); color: var(--ivory); }
+  .fseason span { display: block; font-size: .58rem; letter-spacing: .24em; text-transform: uppercase; color: var(--gold-soft); }
+  .fseason p {
+    margin: 0; font-size: .84rem; line-height: 1.7; color: #e3dccf;
+    max-height: 0; opacity: 0; overflow: hidden; transition: max-height .6s var(--ease), opacity .5s, margin .5s;
+  }
+  .fseason:hover p { max-height: 8em; opacity: 1; margin-top: 12px; }
+  @media (hover: none) { .fseason p { max-height: none; opacity: 1; margin-top: 12px; } }
+  @media (max-width: 1000px) { .fseasons__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .fseasons__grid { grid-template-columns: 1fr; } .fseason { aspect-ratio: 4 / 3; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fhero__frame :global(img) { animation: none; }
+  }
+</style>
+
+<script>
+  // Essentials accordion: one note open at a time.
+  document.querySelectorAll<HTMLElement>('[data-acc]').forEach((acc) => {
+    const items = [...acc.querySelectorAll<HTMLElement>('.facc__item')];
+    items.forEach((item) =>
+      item.querySelector('button')!.addEventListener('click', () => {
+        const open = !item.classList.contains('is-open');
+        items.forEach((other) => {
+          const on = other === item && open;
+          other.classList.toggle('is-open', on);
+          other.querySelector('button')!.setAttribute('aria-expanded', String(on));
+        });
+      }),
+    );
+  });
+</script>

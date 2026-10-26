@@ -1,0 +1,118 @@
+---
+interface Props {
+  kind: 'general' | 'dining' | 'spa' | 'event';
+  venue?: string;
+  submitLabel?: string;
+}
+import { site } from '../data/site';
+
+const { kind, venue = '', submitLabel = 'Send request' } = Astro.props;
+const showBookingFields = kind !== 'general';
+const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
+---
+<form class="eform" data-enquiry data-endpoint={site.formEndpoint} novalidate>
+  <input type="hidden" name="kind" value={kind} />
+  <input type="hidden" name="venue" value={venue} />
+  <div class="hp" aria-hidden="true">
+    <label>Leave this empty <input name="website" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label for={`${kind}-name`}>Full name</label>
+      <input class="input" id={`${kind}-name`} name="name" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for={`${kind}-email`}>Email</label>
+      <input class="input" id={`${kind}-email`} name="email" type="email" autocomplete="email" required />
+    </div>
+    <div class:list={['field', { 'span-2': !showBookingFields }]}>
+      <label for={`${kind}-phone`}>Phone / WhatsApp</label>
+      <input class="input" id={`${kind}-phone`} name="phone" type="tel" autocomplete="tel" />
+    </div>
+    {showBookingFields && (
+      <div class="field">
+        <label for={`${kind}-guests`}>{guestsLabel}</label>
+        <input class="input" id={`${kind}-guests`} name="guests" type="number" min="1" max={kind === 'event' ? 100 : 20} value="2" />
+      </div>
+    )}
+    {showBookingFields && (
+      <div class="field">
+        <label for={`${kind}-date`}>Date</label>
+        <input class="input" id={`${kind}-date`} name="date" type="date" required data-min-today />
+      </div>
+    )}
+    {showBookingFields && (
+      <div class="field">
+        <label for={`${kind}-time`}>Preferred time</label>
+        <input class="input" id={`${kind}-time`} name="time" type="time" />
+      </div>
+    )}
+    <div class="field span-2">
+      <label for={`${kind}-message`}>{kind === 'general' ? 'Message' : 'Special requests'}</label>
+      <textarea class="textarea" id={`${kind}-message`} name="message" required={kind === 'general'}></textarea>
+    </div>
+    <div class="span-2 eform__foot">
+      <button class="btn" type="submit">{submitLabel}</button>
+      <p class="eform__status" role="status" aria-live="polite" data-status></p>
+    </div>
+  </div>
+</form>
+
+<style>
+  .eform__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+  .eform__status { margin: 0; font-size: .95rem; }
+  .eform__status.is-error { color: #a4473a; }
+  .eform__status.is-ok { color: var(--gold-deep); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLInputElement>('[data-min-today]').forEach((el) => {
+    const d = new Date();
+    el.min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+
+  document.querySelectorAll<HTMLFormElement>('[data-enquiry]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.className = 'eform__status';
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      button.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        const { website, kind, venue, ...fields } = Object.fromEntries(new FormData(form)) as Record<string, string>;
+        const titles: Record<string, string> = { general: 'Website enquiry', dining: 'Table reservation request', spa: 'Spa appointment request', event: 'Event enquiry' };
+        // Sent by FormSubmit as an email to the reservations address; replies go straight to the guest.
+        const res = await fetch(form.dataset.endpoint!, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `${titles[kind] ?? 'Website enquiry'}${venue ? ` — ${venue}` : ''}`,
+            _template: 'table',
+            _captcha: 'false',
+            _honey: website ?? '',
+            _replyto: fields.email,
+            ...(venue ? { Venue: venue } : {}),
+            ...fields,
+          }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { success?: string | boolean; message?: string };
+        if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `HTTP ${res.status}`);
+        form.reset();
+        status.classList.add('is-ok');
+        status.textContent = 'Thank you — your request has been received. Our team will be in touch shortly.';
+      } catch (err) {
+        console.warn('Enquiry not sent:', err);
+        status.classList.add('is-error');
+        status.textContent = 'We could not send your request just now. Please try again, or call or WhatsApp +975 16993333.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>

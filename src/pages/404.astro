@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { img } from '../lib/images';
+---
+<Base title="Page not found">
+  <PageHero image={img('home-2')} eyebrow="404" title="This page has <em>wandered off</em>" subtitle="The page you are looking for may have moved. Let us guide you back.">
+    <div class="actions">
+      <a class="btn" href="/">Return home</a>
+      <a class="btn btn--light" href="/book">Book your stay</a>
+    </div>
+  </PageHero>
+</Base>
+
+<style>
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+</style>

@@ -1,0 +1,155 @@
+---
+// Experiences: grouped by theme, each told as an alternating text-and-photo-pair row,
+// then everything a stay includes and an enquiry call to action.
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import logoDark from '../../assets/logo-dark.png';
+import { experiences, stayIncludes } from '../../data/site';
+import { img } from '../../lib/images';
+
+const xp = Object.fromEntries(experiences.map((e) => [e.slug, e]));
+const venue = (slug: string) => {
+  const e = xp[slug];
+  return { name: e.name, meta: `${e.kind} · ${e.location}`, hours: e.hours.map((h) => h.value).join(' · '), text: e.intro, href: `/experiences/${slug}` };
+};
+
+const themes = [
+  {
+    title: 'Dining',
+    text: 'Every meal at The 33rd is pure vegetarian — fresh, creative and wholesome, from a slow breakfast to a nightcap above the city.',
+    images: ['dining-4', 'cafe-3'],
+    items: ['artisans-table', 'salts-rooftop-bar', 'sugar-box-cafe'].map(venue),
+  },
+  {
+    title: 'Wellness',
+    text: 'Unwind after a day in the valley with a treatment at the spa, or keep your routine going in the fitness centre.',
+    images: ['spa-3', 'gym-1'],
+    items: ['om-spa', 'gym'].map(venue),
+  },
+  {
+    title: 'Meetings & Events',
+    text: 'A calm, well-equipped setting for board meetings, workshops and private celebrations, with catering from our own kitchen.',
+    images: ['board-6', 'board-5'],
+    items: ['the-boardroom'].map(venue),
+  },
+  {
+    title: 'Explore Thimphu',
+    text: 'The Buddha Dordenma is just above Babesa and the city centre ten minutes away. Our concierge arranges cars, licensed guides and permits for every outing.',
+    images: ['guide-buddha-point', 'guide-tashichoedzong'],
+    items: [
+      { name: 'Destination', meta: 'Landmarks · nature · culture', text: 'Twelve places to visit in and around the capital, with travel times from the hotel.', href: '/destination' },
+      { name: 'Travel Guide', meta: 'Visas · flights · seasons', text: 'Everything to know before you arrive, from entry formalities to the best time to visit.', href: '/travel-guide' },
+    ],
+  },
+];
+---
+<Base title="Experiences" description="Pure vegetarian dining, Salts Rooftop Bar, Sugar Box Café, Om Spa, the fitness centre, The Boardroom and journeys around Thimphu at The 33rd Executive Suites.">
+  <PageHero image={img('food-zheycha')} eyebrow="The 33rd" title="Experiences" />
+
+  <section class="xintro">
+    <div class="container container--narrow">
+      <Image src={logoDark} alt="" width={240} class="xemblem" />
+      <p>From pure vegetarian dining and a rooftop bar seven floors above Thimphu to a quiet spa and journeys through the valley — everything you need to slow down is under one roof, and the rest is a short drive away.</p>
+    </div>
+  </section>
+
+  {themes.map((t, i) => (
+    <section class:list={['xtheme', { 'xtheme--flip': i % 2 === 1 }]} aria-labelledby={`xt-${i}`}>
+      <div class="container xtheme__grid">
+        <div class="xtheme__text reveal">
+          <span class="xtheme__num">0{i + 1}</span>
+          <h2 id={`xt-${i}`}>{t.title}</h2>
+          <p class="xtheme__lead">{t.text}</p>
+          <ul class="xtheme__items">
+            {t.items.map((it) => (
+              <li>
+                <a href={it.href}>
+                  <strong>{it.name}</strong>
+                  <span class="xtheme__meta">{it.meta}</span>
+                  <span class="xtheme__desc">{it.text}</span>
+                  {'hours' in it && it.hours && <span class="xtheme__hours"><Icon name="clock" size={14} />{it.hours}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="xtheme__pair reveal reveal-delay-1">
+          <div class="xtheme__big"><Image src={img(t.images[0])} alt="" widths={[600, 900, 1300]} sizes="(max-width: 900px) 100vw, 45vw" /></div>
+          <div class="xtheme__small"><Image src={img(t.images[1])} alt="" widths={[300, 500]} sizes="(max-width: 900px) 45vw, 20vw" /></div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="xinc" aria-labelledby="xinc-title">
+    <div class="container">
+      <h2 id="xinc-title" class="reveal">All stays include</h2>
+      <ul class="xinc__list">
+        {stayIncludes.map((s, i) => (
+          <li class:list={['reveal', `reveal-delay-${i % 4}`]}>
+            <Icon name="check" size={18} />
+            <strong>{s.title}</strong>
+            <span>{s.text}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="xinc__cta reveal">
+        <a class="btn" href="/contact">Make an enquiry</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Intro ---------- */
+  .xintro { background: var(--white); text-align: center; padding-block: clamp(56px, 7vw, 96px); }
+  .xemblem { display: block; width: 120px; height: auto; margin: 0 auto 28px; }
+  .xintro p { max-width: 70ch; margin: 0 auto; color: var(--muted); line-height: 1.95; }
+
+  /* ---------- Themes ---------- */
+  .xtheme { background: var(--white); padding-block: clamp(56px, 7vw, 100px); border-top: 1px solid var(--stone); }
+  .xtheme--flip { background: #f4f4f4; border-top: 0; }
+  .xtheme__grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(40px, 7vw, 120px); align-items: center; }
+  .xtheme--flip .xtheme__text { order: 2; }
+  .xtheme__num { display: block; margin-bottom: 10px; font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); letter-spacing: .1em; }
+  .xtheme h2 { font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 16px; }
+  .xtheme__lead { color: var(--muted); line-height: 1.9; max-width: 52ch; }
+  .xtheme__items { list-style: none; margin: 28px 0 0; padding: 0; border-top: 1px solid var(--stone); }
+  .xtheme__items li { border-bottom: 1px solid var(--stone); }
+  .xtheme__items a { display: grid; gap: 4px; padding: 18px 0; }
+  .xtheme__items strong { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; color: var(--ink); transition: color .3s; }
+  .xtheme__items a:hover strong { color: var(--gold-deep); }
+  .xtheme__meta { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold-deep); }
+  .xtheme__desc { font-size: .84rem; color: var(--muted); line-height: 1.7; }
+  .xtheme__hours { display: inline-flex; align-items: center; gap: 8px; font-size: .74rem; color: var(--charcoal); }
+  .xtheme__hours :global(svg) { color: var(--gold); }
+
+  .xtheme__pair { position: relative; padding-bottom: 18%; }
+  .xtheme__big { aspect-ratio: 4 / 3; width: 82%; overflow: hidden; background: var(--stone); }
+  .xtheme__small {
+    position: absolute; right: 0; bottom: 0; width: 44%; aspect-ratio: 4 / 5; overflow: hidden; background: var(--stone);
+    border: 8px solid var(--white);
+  }
+  .xtheme--flip .xtheme__big { margin-left: auto; }
+  .xtheme--flip .xtheme__small { right: auto; left: 0; border-color: #f4f4f4; }
+  .xtheme__pair :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease-out); }
+  .xtheme__pair:hover :global(img) { transform: scale(1.04); }
+  @media (max-width: 900px) {
+    .xtheme__grid { grid-template-columns: 1fr; }
+    .xtheme--flip .xtheme__text { order: 0; }
+  }
+
+  /* ---------- All stays include ---------- */
+  .xinc { background: var(--sand); padding-block: clamp(72px, 9vw, 120px); text-align: center; }
+  .xinc h2 { font-family: var(--font-ui); font-size: .8rem; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--ink); margin-bottom: clamp(36px, 5vw, 56px); }
+  .xinc__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 28px; }
+  .xinc__list li { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .xinc__list :global(svg) { color: var(--gold); margin-bottom: 4px; }
+  .xinc__list strong { font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; color: var(--ink); }
+  .xinc__list span { font-size: .8rem; color: var(--muted); max-width: 26ch; }
+  .xinc__cta { margin-top: clamp(40px, 5vw, 64px); }
+  @media (max-width: 900px) { .xinc__list { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .xinc__list { grid-template-columns: 1fr; } }
+</style>
