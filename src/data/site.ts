@@ -251,12 +251,8 @@ export const experiences: Experience[] = [
     kind: 'Signature Restaurant',
     tagline: 'Pure vegetarian, beautifully made.',
     intro:
-      'The signature dining experience of The 33rd — sophisticated yet welcoming, from a casual lunch with friends to an elegant dinner with colleagues.',
-    body: [
-      'Thoughtfully designed with modern décor and subtle artistic touches, Artisan’s Table complements the original artwork displayed throughout the hotel.',
-      'We focus on top-quality ingredients, prepared in a strictly pathogen-free kitchen and served with warm, attentive hospitality. Our menu celebrates pure vegetarian cuisine — Indian, Western, Thai and gourmet artisanal dishes. A dedicated Indian chef ensures every Indian dish reflects the richness of its tradition, while all other creations are crafted by our executive chef.',
-      'Seating 60 guests, it is a comfortable and inviting space for everything from a leisurely breakfast to a gourmet dinner.',
-    ],
+      'Artisan’s Table offers a thoughtfully curated vegetarian dining experience, celebrating fresh ingredients, creative flavours, and the art of wholesome cooking. Every dish is prepared with care, bringing together seasonal produce and culinary craftsmanship to create delicious, nourishing meals for every guest.',
+    body: [],
     location: '1st Floor',
     hours: [
       { label: 'Breakfast', value: '7:00 AM – 10:00 AM' },
@@ -272,11 +268,8 @@ export const experiences: Experience[] = [
     kind: 'Rooftop Bar',
     tagline: 'Sunset above the city.',
     intro:
-      'The ultimate rooftop escape — an open-air, tropical setting with relaxed vibes and panoramic views of Thimphu City.',
-    body: [
-      'With a full bar and a carefully curated selection of craft beers, wines, rums and spirits, Salts is perfect for a sunset cocktail, catching up with friends, or hosting an informal gathering with colleagues.',
-      'Our bartenders craft both classic and inventive cocktails, while light bites and snacks complete the experience. Tropical décor, a gentle breeze and a warm welcome make Salts a serene haven above the city.',
-    ],
+      'The Rooftop Bar at our property offers a relaxing atmosphere with beautiful views, making it an ideal spot to unwind and enjoy quality time with friends, family, or colleagues. Whether you’re looking to enjoy refreshing drinks, casual conversations, or a memorable evening under the open sky, the rooftop provides the perfect setting for every occasion.',
+    body: [],
     location: '7th Floor · Rooftop',
     hours: [{ label: 'Daily', value: '10:00 AM – 12:00 AM' }],
     reserve: 'dining',
@@ -287,12 +280,10 @@ export const experiences: Experience[] = [
     slug: 'sugar-box-cafe',
     name: 'Sugar Box Café',
     kind: 'Artisan Bakery & Café',
-    tagline: 'Fresh from our in-house bakery.',
+    tagline: 'Freshly baked happiness.',
     intro:
-      'Our in-house bakery and café, serving freshly baked artisanal breads, pastries, cakes and specialty coffee throughout the day.',
-    body: [
-      'From babka and Japanese milk bread to butter cookies and celebration cakes, everything at Sugar Box is baked in-house every day — the perfect companion to a morning coffee or an afternoon pause.',
-    ],
+      'Welcome to Sugar Box Café, where the aroma of freshly baked bread and the sweetness of delightful desserts create a truly special experience. We take pride in preparing fresh, delicious breads, cakes, pastries, cookies, and a variety of other sweet treats to satisfy every craving. From soft, warm loaves of bread to beautifully crafted desserts, every bite is made with care, quality ingredients, and a touch of love. Whether you are looking for a quick breakfast, an afternoon treat, or something sweet to share with your loved ones, Sugar Box Café is the perfect place to enjoy freshness, flavour, and happiness in every bite.',
+    body: [],
     location: '7th Floor',
     hours: [{ label: 'Daily', value: '10:00 AM – 12:00 AM' }],
     reserve: 'none',
@@ -322,11 +313,8 @@ export const experiences: Experience[] = [
     kind: 'Meetings & Events',
     tagline: 'Gatherings of up to 100 guests.',
     intro:
-      'A versatile conference space designed to host meetings, events and corporate gatherings with ease and style.',
-    body: [
-      'With a capacity of up to 100 people, The Boardroom provides a professional and comfortable environment for productive sessions or special occasions.',
-      'Equipped with modern facilities and thoughtful amenities, it serves hotel guests and local visitors alike — ideal for business meetings, workshops, seminars and private events. Flexible seating and a well-designed layout ensure every gathering runs smoothly.',
-    ],
+      'The Conference/Board Room at our property provides a professional and comfortable setting for business meetings, conferences, presentations, workshops, and various private or corporate activities. Designed to accommodate different professional needs, it offers a convenient space for productive discussions, collaboration, and successful events.',
+    body: [],
     location: '2nd Floor',
     hours: [{ label: 'Daily', value: '9:00 AM – 12:00 AM' }],
     reserve: 'event',
@@ -339,10 +327,8 @@ export const experiences: Experience[] = [
     kind: 'Gym',
     tagline: 'Stay active, feel refreshed.',
     intro:
-      'A fully equipped fitness centre with modern cardio and strength-training equipment and views over the valley.',
-    body: [
-      'Whether you are starting the day with an invigorating workout or unwinding after meetings or sightseeing, the gym is a comfortable and convenient space to maintain your routine and leave feeling refreshed.',
-    ],
+      'The gym at 33rd Executive Suites offers a comfortable and convenient space for guests to maintain their fitness routines while travelling. Providing a welcoming environment for exercise, wellness, and staying active, the gym is open to both in-house guests and outside visitors, making it accessible to anyone looking to maintain a healthy and active lifestyle.',
+    body: [],
     location: '2nd Floor',
     hours: [{ label: 'Daily', value: '6:00 AM – 10:00 PM' }],
     reserve: 'none',

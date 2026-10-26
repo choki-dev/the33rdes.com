@@ -33,10 +33,7 @@ const chapters = [
   {
     kicker: 'Dine',
     title: 'Artisan’s Table',
-    text: [
-      xp['artisans-table'].intro,
-      'Pure vegetarian cuisine — Indian, Western, Thai and gourmet artisanal dishes — prepared in a strictly pathogen-free kitchen, with a dedicated Indian chef and an executive chef at the pass.',
-    ],
+    text: [xp['artisans-table'].intro],
     meta: `${xp['artisans-table'].location} · Breakfast ${xp['artisans-table'].hours[0].value}`,
     image: 'dining-4',
     inset: 'food-thali',
@@ -48,7 +45,7 @@ const chapters = [
   {
     kicker: 'Unwind',
     title: 'Salts Rooftop Bar',
-    text: [xp['salts-rooftop-bar'].intro, xp['salts-rooftop-bar'].body[0]],
+    text: [xp['salts-rooftop-bar'].intro],
     meta: `${xp['salts-rooftop-bar'].location} · ${xp['salts-rooftop-bar'].hours[0].value}`,
     image: 'spa-1',
     inset: 'home-2',
@@ -72,7 +69,7 @@ const chapters = [
   {
     kicker: 'Gather',
     title: 'The Boardroom',
-    text: [`${xp['the-boardroom'].intro} Flexible seating for up to 100 guests — for hotel guests and local visitors alike.`],
+    text: [xp['the-boardroom'].intro],
     meta: `${xp['the-boardroom'].location} · Up to 100 guests`,
     image: 'board-6',
     inset: 'spa-2',
