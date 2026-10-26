@@ -8,7 +8,8 @@ import { img } from '../lib/images';
 
 interface Props { overlay?: boolean }
 const { overlay = true } = Astro.props;
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = Astro.url.pathname.slice(base.length).replace(/\/$/, '') || '/';
 const isActive = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
 const previews = nav.flatMap((n) => ('image' in n ? [{ href: n.href, image: n.image }] : []));
 ---

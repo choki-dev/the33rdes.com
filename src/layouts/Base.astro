@@ -19,7 +19,7 @@ interface Props {
 }
 const { title, description = site.description, image = '/video/hero-poster.jpg', overlayHeader = true } = Astro.props;
 const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — Luxury Boutique Hotel in Thimphu, Bhutan`;
-const canonical = new URL(Astro.url.pathname, site.url).toString();
+const canonical = new URL(Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/', site.url).toString();
 const ogImage = new URL(image, site.url).toString();
 
 const jsonLd = {

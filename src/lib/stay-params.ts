@@ -41,6 +41,9 @@ export function readStayParams(search: string): StayParams {
 
 type Stay = { checkIn: string; checkOut: string; adults: number; children: number; rooms: number };
 
+// Site base path ("" on the live domain, "/the33rdes.com" on the GitHub Pages preview).
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 export function availabilityUrl(s: Stay) {
   const p = new URLSearchParams({
     dates: `${toDmy(s.checkIn)} to ${toDmy(s.checkOut)}`,
@@ -48,7 +51,7 @@ export function availabilityUrl(s: Stay) {
     children: String(s.children),
     rooms: String(s.rooms),
   });
-  return `/availability/?${p}`;
+  return `${base}/availability/?${p}`;
 }
 
 export function bookUrl(s: Stay, room?: string) {
@@ -60,5 +63,5 @@ export function bookUrl(s: Stay, room?: string) {
     rooms: String(s.rooms),
   });
   if (room) p.set('room', room);
-  return `/book?${p}`;
+  return `${base}/book?${p}`;
 }
