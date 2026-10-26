@@ -277,7 +277,7 @@ const chapters = [
     <div class="container container--narrow center reveal">
       <span class="eyebrow eyebrow--center">In-house bakery</span>
       <h2>Sugar Box <em>Café</em></h2>
-      <p class="lead">{xp['sugar-box-cafe'].intro}</p>
+      <p class="lead">{xp['sugar-box-cafe'].intro.split(/(?<=\.)\s+/).slice(0, 2).join(' ')}</p>
     </div>
     <div class="container triptych">
       {['cafe-3', 'home-1', 'cafe-1'].map((key, i) => (

@@ -62,6 +62,7 @@ export const nav = [
     image: 'dining-4',
     children: [
       { label: 'Artisan’s Table', href: '/experiences/artisans-table' },
+      { label: 'Private Dining', href: '/experiences/private-dining' },
       { label: 'Salts Rooftop Bar', href: '/experiences/salts-rooftop-bar' },
       { label: 'Sugar Box Café', href: '/experiences/sugar-box-cafe' },
     ],
@@ -261,6 +262,21 @@ export const experiences: Experience[] = [
     reserve: 'dining',
     hero: 'dining-4',
     images: ['dining-4', 'dining-5', 'dining-6', 'dining-3', 'food-thali', 'food-zheycha', 'food-salad', 'dining-1', 'food-mango', 'food-burger', 'food-cheesecake'],
+  },
+  {
+    slug: 'private-dining',
+    name: 'Private Dining',
+    kind: 'Private Dining',
+    tagline: 'For gatherings and celebrations.',
+    intro:
+      'Private Dining offers a spacious and comfortable setting, conveniently located near the highway for easy access. Ideal for private gatherings, special celebrations, and intimate dining experiences, it provides a welcoming atmosphere where guests can enjoy delicious meals and memorable moments together.',
+    body: [],
+    location: 'Near the highway',
+    hours: [],
+    reserve: 'dining',
+    // Placeholder photos from the restaurant until Private Dining has its own.
+    hero: 'dining-6',
+    images: ['dining-6', 'dining-3', 'dining-5'],
   },
   {
     slug: 'salts-rooftop-bar',
