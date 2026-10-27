@@ -145,6 +145,7 @@ const perks = ['Daily vegetarian breakfast', 'High-speed Wi-Fi & kitchenette', '
     flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
     border: 1px solid var(--gold-soft); color: var(--gold-deep); transition: background .4s, color .4s, border-color .4s;
   }
+  .amen__label { min-width: 0; overflow-wrap: break-word; }
   .amen li:hover { background: var(--ink); color: var(--ivory); transform: translateY(-2px); }
   .amen li:hover .amen__icon { background: var(--gold); border-color: var(--gold); color: var(--ink); }
 
@@ -202,7 +203,8 @@ const perks = ['Daily vegetarian breakfast', 'High-speed Wi-Fi & kitchenette', '
   }
   @media (max-width: 1200px) and (min-width: 1001px) { .amen { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 640px) {
-    .amen { grid-template-columns: 1fr 1fr; }
+    .amen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .amen li { padding: 10px; }
-    }
+  }
+  @media (max-width: 380px) { .amen { grid-template-columns: minmax(0, 1fr); } }
 </style>

@@ -23,8 +23,8 @@ const chapters = [
       'Every dish at The 33rd is pure vegetarian — Indian, Western, Thai and gourmet artisanal plates, with vegan-friendly choices throughout and innovative meat alternatives, all from a strictly pathogen-free kitchen.',
     ],
     meta: `100% vegetarian · ${xp['artisans-table'].location}`,
-    image: 'food-salad',
-    inset: 'food-mango',
+    image: 'food-steak',
+    inset: 'food-mushroom',
     links: [
       { label: 'View the menu', href: '/experiences/artisans-table#menu' },
       { label: 'Reserve a table', href: site.phoneHref },
@@ -460,7 +460,7 @@ const chapters = [
   }
 
   /* ---------- Rooms: gallery carousel ---------- */
-  .rooms { background: var(--sand); }
+  .rooms { background: var(--sand); padding-bottom: calc(var(--section) * .5); }
   .rooms__head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: clamp(40px, 6vw, 72px); }
   .rooms__head h2 { margin: 0; }
   .rooms__head p { color: var(--muted); max-width: 46ch; }
@@ -499,7 +499,7 @@ const chapters = [
   }
 
   /* ---------- Experiences showcase (light) ---------- */
-  .lux { position: relative; overflow: hidden; padding-block: clamp(96px, 12vw, 170px); background: var(--white); }
+  .lux { position: relative; overflow: hidden; padding-block: calc(var(--section) * .5) var(--section); background: var(--white); }
   .lux__head { text-align: center; max-width: 760px; margin-bottom: clamp(56px, 8vw, 104px); }
   .lux__head h2 { font-size: clamp(1.7rem, 2.9vw, 2.5rem); }
   .lux__head p { color: var(--muted); margin: 0 auto; max-width: 52ch; }

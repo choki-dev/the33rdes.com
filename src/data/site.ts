@@ -261,7 +261,7 @@ export const experiences: Experience[] = [
     ],
     reserve: 'dining',
     hero: 'dining-4',
-    images: ['dining-4', 'dining-5', 'dining-6', 'dining-3', 'food-thali', 'food-zheycha', 'food-salad', 'dining-1', 'food-mango', 'food-burger', 'food-cheesecake'],
+    images: ['dining-4', 'dining-5', 'dining-6', 'dining-3', 'food-cauliflower', 'food-steak', 'food-thali', 'food-zheycha', 'food-mushroom', 'food-salad', 'dining-1', 'food-egg', 'food-mango', 'food-burger', 'food-cake', 'food-cheesecake'],
   },
   {
     slug: 'private-dining',
