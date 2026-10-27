@@ -123,8 +123,8 @@ export const rooms: Room[] = [
     bed: 'King or Twin',
     capacity: 2,
     view: 'Valley & nunnery view',
-    hero: 'valley-1',
-    images: ['valley-1', 'exec-1', 'exec-4', 'exec-2', 'exec-5'],
+    hero: 'valley-suite-1',
+    images: ['valley-suite-1', 'valley-suite-2', 'valley-suite-3', 'valley-1'],
   },
   {
     slug: 'executive-suite',
@@ -137,8 +137,8 @@ export const rooms: Room[] = [
     bed: 'King or Twin',
     capacity: 2,
     view: 'City view',
-    hero: 'exec-1',
-    images: ['exec-1', 'exec-4', 'exec-3', 'exec-2', 'exec-5'],
+    hero: 'executive-suite-1',
+    images: ['executive-suite-1', 'executive-suite-2', 'exec-1', 'exec-4', 'exec-3', 'exec-2', 'exec-5'],
   },
   {
     slug: 'deluxe-suite',
@@ -149,8 +149,8 @@ export const rooms: Room[] = [
     bed: 'King or Twin',
     capacity: 2,
     view: 'City view',
-    hero: 'deluxe-4',
-    images: ['deluxe-4', 'deluxe-3', 'deluxe-1', 'deluxe-5', 'deluxe-2'],
+    hero: 'deluxe-suite-1',
+    images: ['deluxe-suite-1', 'deluxe-6'],
   },
   {
     slug: 'deluxe-premium',
@@ -161,8 +161,8 @@ export const rooms: Room[] = [
     bed: 'King or Twin',
     capacity: 2,
     view: 'City view',
-    hero: 'deluxe-3',
-    images: ['deluxe-3', 'deluxe-4', 'deluxe-1', 'deluxe-5', 'deluxe-2'],
+    hero: 'deluxe-premium-1',
+    images: ['deluxe-premium-1', 'deluxe-premium-2', 'deluxe-premium-3', 'deluxe-6'],
   },
   {
     slug: 'deluxe-standard',
@@ -173,8 +173,8 @@ export const rooms: Room[] = [
     bed: 'King or Twin',
     capacity: 2,
     view: 'City view',
-    hero: 'about-1',
-    images: ['about-1', 'deluxe-4', 'deluxe-1', 'deluxe-5', 'deluxe-2'],
+    hero: 'deluxe-standard-1',
+    images: ['deluxe-standard-1', 'deluxe-standard-2', 'deluxe-6'],
   },
 ];
 
@@ -348,8 +348,8 @@ export const experiences: Experience[] = [
     location: '2nd Floor',
     hours: [{ label: 'Daily', value: '6:00 AM – 10:00 PM' }],
     reserve: 'none',
-    hero: 'gym-1',
-    images: ['gym-1', 'gym-2', 'gym-3'],
+    hero: 'gym-4',
+    images: ['gym-4', 'gym-5', 'gym-1', 'gym-2', 'gym-3'],
   },
 ];
 
