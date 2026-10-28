@@ -45,7 +45,7 @@ const links = [
 
     <div class="footer__app">
       <span>Available on</span>
-      <Image src={zheygo} alt="ZheyGo" width={240} />
+      <a href="https://www.zheygo.bt/" target="_blank" rel="noopener" aria-label="ZheyGo (opens in a new tab)"><Image src={zheygo} alt="ZheyGo" width={240} /></a>
     </div>
 
     <div class="footer__bottom">
@@ -85,7 +85,9 @@ const links = [
 
   .footer__app { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 28px 0 clamp(40px, 5vw, 56px); }
   .footer__app span { font-size: .64rem; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
-  .footer__app :global(img) { width: 96px; height: auto; }
+  .footer__app a { display: block; transition: opacity .3s; }
+  .footer__app a:hover { opacity: .75; }
+  .footer__app :global(img) { display: block; width: 96px; height: auto; }
 
   .footer__bottom {
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
