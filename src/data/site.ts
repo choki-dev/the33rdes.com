@@ -285,7 +285,8 @@ export const experiences: Experience[] = [
     hours: [{ label: 'Daily', value: '10:00 AM – 12:00 AM' }],
     reserve: 'dining',
     hero: 'spa-1',
-    images: ['spa-1', 'home-2'],
+    // Placeholder photos from around the hotel until the rooftop bar has its own.
+    images: ['spa-1', 'home-2', 'dining-5', 'lobby-2', 'valley-1', 'lobby-3'],
   },
   {
     slug: 'sugar-box-cafe',
