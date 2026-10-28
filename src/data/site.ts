@@ -26,7 +26,7 @@ export const site = {
   email: 'reservation@the33rdes.com',
   // Booking and enquiry forms post here (FormSubmit, no API key needed). The first submission sends
   // an activation email to this address; click "Activate Form" in it once and requests start arriving.
-  formEndpoint: 'https://formsubmit.co/ajax/choki@abit.bt',
+  formEndpoint: 'https://formsubmit.co/ajax/reservation@the33rdes.com',
   social: {
     facebook: 'https://www.facebook.com/share/1Cpdm4A9DZ/',
     instagram: 'https://www.instagram.com/the33rdexecutivesuites',

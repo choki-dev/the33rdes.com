@@ -6,7 +6,7 @@
   "observability": { "enabled": true },
   "vars": {
     // Where booking & enquiry notifications are sent.
-    "RESERVATIONS_EMAIL": "choki@abit.bt",
+    "RESERVATIONS_EMAIL": "reservation@the33rdes.com",
     // Sender on Resend (https://resend.com). onboarding@resend.dev works straight away but only delivers
     // to the Resend account's own address; verify the33rdes.com on Resend, then switch to
     // "The 33rd Executive Suites <reservations@the33rdes.com>" so guests receive their copy too.
