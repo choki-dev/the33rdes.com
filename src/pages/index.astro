@@ -447,9 +447,9 @@ const chapters = [
     .hero__tag span { display: block; }
     .hero__tag .hero__sep { display: none; }
   }
-  /* Phones hide the floating WhatsApp button (the bottom bar has one), so the booking bar can sit low again. */
+  /* Phones: clear the bottom quick-action bar (60px) and the WhatsApp button floating above it. */
   @media (max-width: 600px) {
-    .hero__bar { padding-bottom: 24px; }
+    .hero__bar { padding-bottom: calc(60px + 16px + 52px + 16px + env(safe-area-inset-bottom)); }
   }
 
   /* ---------- Intro band ---------- */
