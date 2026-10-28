@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { experiences, rooms } from '../data/site';
 
-// Every indexable page, with the trailing slash the built pages (and their canonical tags) use; the canonical host comes from `site` in astro.config.mjs.
+// Every indexable page (booking and availability steps are noindex, so they are left out), with the trailing slash the built pages (and their canonical tags) use; the canonical host comes from `site` in astro.config.mjs.
 const paths = [
   '/',
   '/rooms/',
@@ -12,8 +12,6 @@ const paths = [
   '/travel-guide/',
   '/gallery/',
   '/about/',
-  '/availability/',
-  '/book/',
   '/contact/',
 ];
 

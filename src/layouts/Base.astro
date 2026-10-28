@@ -18,10 +18,10 @@ import { img } from '../lib/images';
 interface Props {
   title?: string;
   description?: string;
-  /** Share image: a path under /public or a photo from src/assets (resized to 1200px wide). */
+  /** Share image: a path under /public or a photo from src/assets (resized to 1200px wide). Defaults to the valley photo. */
   image?: string | ImageMetadata;
   imageAlt?: string;
-  /** Keep the page out of search results (404, booking steps). */
+  /** Keep the page out of search results (404, booking and availability steps). */
   noindex?: boolean;
   /** Header starts transparent over a dark hero. */
   overlayHeader?: boolean;
@@ -29,7 +29,7 @@ interface Props {
 const {
   title,
   description: fullDescription = site.description,
-  image = img('valley-1'),
+  image,
   imageAlt,
   noindex = false,
   overlayHeader = true,
@@ -40,14 +40,21 @@ const clip = (text: string, max = 158) => {
   const sentences = text.match(/[^.!?]+[.!?]+/g) ?? [];
   let out = '';
   for (const s of sentences) if ((out + s).trim().length <= max) out += s; else break;
-  return out.trim() || text.slice(0, text.lastIndexOf(' ', max - 1)).replace(/[\s,;:—–-]+$/, '') + '…';
+  const cut = text.lastIndexOf(' ', max - 1);
+  return out.trim() || text.slice(0, cut > 0 ? cut : max - 1).replace(/[\s,;:—–-]+$/, '') + '…';
 };
 const description = clip(fullDescription);
 const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — Luxury Boutique Hotel in Thimphu, Bhutan`;
-const path = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length) || '/';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = Astro.url.pathname.slice(base.length) || '/';
 const canonical = new URL(path, site.url).toString();
-const shareImage = typeof image === 'string' ? image : (await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 })).src;
-const ogImage = new URL(shareImage, site.url).toString();
+// Files are fetched from wherever this build is hosted (the preview lives under a sub-path), unlike the
+// canonical page URLs, which always name the production site. getImage() paths already carry the base.
+const asset = (p: string) => new URL(p.startsWith(base + '/') ? p : base + p, Astro.site ?? site.url).toString();
+const shareSize = { width: 1200, format: 'jpg', quality: 80 } as const;
+const defaultShare = asset((await getImage({ src: img('valley-1'), ...shareSize })).src);
+const ogImage =
+  image === undefined ? defaultShare : asset(typeof image === 'string' ? image : (await getImage({ src: image, ...shareSize })).src);
 
 const hotelId = `${site.url}/#hotel`;
 const hotel = {
@@ -60,8 +67,8 @@ const hotel = {
   url: site.url,
   telephone: site.phone,
   email: site.email,
-  image: new URL((await getImage({ src: img('valley-1'), width: 1200, format: 'jpg', quality: 80 })).src, site.url).toString(),
-  logo: new URL('/favicon.png', site.url).toString(),
+  image: defaultShare,
+  logo: asset('/favicon.png'),
   address: {
     '@type': 'PostalAddress',
     streetAddress: site.address.street,

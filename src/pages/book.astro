@@ -21,7 +21,7 @@ const roomData = await Promise.all(
 const config = { rooms: roomData, addons, policies, endpoint: site.formEndpoint };
 const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
 ---
-<Base title="Book Your Stay" description="Book your stay at The 33rd Executive Suites, Thimphu — choose your dates and room, and request airport transfers, spa treatments and more." overlayHeader={false}>
+<Base title="Book Your Stay" noindex description="Book your stay at The 33rd Executive Suites, Thimphu — choose your dates and room, and request airport transfers, spa treatments and more." overlayHeader={false}>
   <section class="book">
     <div class="container">
       <header class="book__head">

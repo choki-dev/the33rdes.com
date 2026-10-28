@@ -36,7 +36,19 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --header-h: 88px;
+  /* Fixed chrome at the bottom of the screen, shared so nothing else is laid out under it:
+     the phone quick-action bar (MobileBookBar) and the floating WhatsApp button (WhatsAppFloat). */
+  --mbar-h: 0px;
+  --wa-size: 58px;
+  --wa-inset: clamp(16px, 2.4vw, 28px);
+  --wa-bottom: var(--wa-inset);
+  /* Room to leave free at the right edge / bottom edge so content never sits under the button. */
+  --wa-clear-x: calc(var(--wa-inset) + var(--wa-size) + 16px);
+  --wa-clear-y: calc(var(--wa-bottom) + var(--wa-size) + 10px);
   color-scheme: light;
+}
+@media (max-width: 600px) {
+  :root { --mbar-h: 60px; --wa-size: 48px; --wa-inset: 16px; --wa-bottom: calc(var(--mbar-h) + 10px + env(safe-area-inset-bottom)); }
 }
 
 *,

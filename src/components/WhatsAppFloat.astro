@@ -13,10 +13,10 @@ const href = `${site.whatsappHref}?text=${encodeURIComponent(message)}`;
 </div>
 
 <style>
-  .wa { position: fixed; right: clamp(16px, 2.4vw, 28px); bottom: clamp(16px, 2.4vw, 28px); z-index: 95; }
+  .wa { position: fixed; right: var(--wa-inset); bottom: var(--wa-bottom); z-index: 95; }
 
   .wa__btn {
-    position: relative; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%;
+    position: relative; display: grid; place-items: center; width: var(--wa-size); height: var(--wa-size); border-radius: 50%;
     background: #25d366; color: var(--white); box-shadow: 0 12px 28px -8px rgba(18, 140, 70, .55);
     transition: transform .3s var(--ease), box-shadow .3s var(--ease);
   }
@@ -36,10 +36,8 @@ const href = `${site.whatsappHref}?text=${encodeURIComponent(message)}`;
 
   @keyframes wa-pulse { 0% { transform: scale(1); opacity: .5; } 70%, 100% { transform: scale(1.6); opacity: 0; } }
 
-  /* Phones: float just above the bottom quick-action bar (60px tall), a touch smaller. */
+  /* Phones: smaller, floating just above the bottom quick-action bar (size and position come from --wa-* tokens). */
   @media (max-width: 600px) {
-    .wa { right: 16px; bottom: calc(60px + 10px + env(safe-area-inset-bottom)); }
-    .wa__btn { width: 48px; height: 48px; }
     .wa__btn svg { width: 24px; height: 24px; }
   }
   @media (prefers-reduced-motion: reduce) {

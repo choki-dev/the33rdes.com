@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import BookingBar from '../components/BookingBar.astro';
 import Icon from '../components/Icon.astro';
@@ -23,6 +23,11 @@ const heroSlides = [
   { key: 'dining-4', alt: 'Artisan’s Table restaurant laid for dinner' },
   { key: 'lobby-1', alt: 'The hotel lobby with a traditional Bhutanese thangka' },
 ];
+const heroWidths = [800, 1400, 2000, 2560];
+// Slides after the first are written without src/srcset; the script fills them in just before each is shown.
+const laterSlides = await Promise.all(
+  heroSlides.slice(1).map((s) => getImage({ src: img(s.key), widths: heroWidths, sizes: '100vw' })),
+);
 
 const chapters = [
   {
@@ -93,15 +98,19 @@ const chapters = [
   <!-- ============ HERO: logo-led, over a photo slideshow ============ -->
   <section class="hero" aria-label="Welcome">
     <div class="hero__media" data-hero-slides>
-      {heroSlides.map((s, i) => (
-        <div class:list={['hero__slide', { 'is-active': i === 0 }]} aria-hidden={i === 0 ? undefined : 'true'}>
-          <Image
-            src={img(s.key)}
-            alt={s.alt}
-            widths={[800, 1400, 2000, 2560]}
+      <div class="hero__slide is-active">
+        <Image src={img(heroSlides[0].key)} alt={heroSlides[0].alt} widths={heroWidths} sizes="100vw" loading="eager" fetchpriority="high" />
+      </div>
+      {laterSlides.map((im, i) => (
+        <div class="hero__slide" aria-hidden="true">
+          <img
+            alt={heroSlides[i + 1].alt}
+            data-src={im.src}
+            data-srcset={im.srcSet.attribute}
             sizes="100vw"
-            loading={i === 0 ? 'eager' : 'lazy'}
-            fetchpriority={i === 0 ? 'high' : 'low'}
+            width={im.attributes.width}
+            height={im.attributes.height}
+            decoding="async"
           />
         </div>
       ))}
@@ -407,14 +416,16 @@ const chapters = [
   }
   /* Only the photos are clipped, so the booking bar's calendar can open below the hero on phones. */
   .hero__media { position: absolute; inset: 0; overflow: hidden; }
-  /* Slides crossfade; each one drifts in slowly while it is on screen. */
+  /* Slides crossfade; each one drifts in slowly while on screen (and while fading out), and freezes when paused. */
   .hero__slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s var(--ease); }
   .hero__slide.is-active { opacity: .72; }
-  .hero__slide :global(img) { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 8s linear; }
-  .hero__slide.is-active :global(img) { transform: scale(1); }
-  .hero.is-paused .hero__slide :global(img) { transition: none; }
+  .hero__slide :global(img) { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); }
+  .hero__slide.is-active :global(img), .hero__slide.is-leaving :global(img) { animation: hero-zoom 8s linear both; }
+  .hero.is-paused .hero__slide :global(img) { animation-play-state: paused; }
+  @keyframes hero-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
   @media (prefers-reduced-motion: reduce) {
-    .hero__slide, .hero__slide :global(img) { transition: none; transform: none; }
+    .hero__slide { transition: none; }
+    .hero__slide :global(img), .hero__slide.is-active :global(img) { animation: none; transform: none; }
   }
   .hero__veil {
     position: absolute; inset: 0;
@@ -432,12 +443,12 @@ const chapters = [
     margin: 28px 0 0; font-size: .74rem; letter-spacing: .34em; text-transform: uppercase; color: #e8e2d6;
     animation: rise 1.6s var(--ease-out) .7s both;
   }
-  /* The bar ends short of the floating WhatsApp button (bottom-right: inset + 58px + gap), so the icon never sits on
-     Check availability. Wide screens already have that room beside the centred container. */
+  /* The bar ends short of the floating WhatsApp button so the icon never sits on Check availability;
+     wide screens already have that room beside the centred container. */
   .hero__bar {
-    padding-right: max(var(--gutter), calc(clamp(16px, 2.4vw, 28px) + 58px + 16px - max(0px, (100vw - var(--container)) / 2)));
+    position: relative; z-index: 5; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both;
+    padding-right: max(var(--gutter), calc(var(--wa-clear-x) - max(0px, (100vw - var(--container)) / 2)));
   }
-  .hero__bar { position: relative; z-index: 5; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both; }
   .hero__sound {
     position: absolute; right: var(--gutter); top: calc(var(--header-h) + 24px);
     width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
@@ -451,9 +462,15 @@ const chapters = [
     .hero__tag span { display: block; }
     .hero__tag .hero__sep { display: none; }
   }
-  /* Phones: the bar is full width, so it sits just above the bottom quick-action bar (60px) plus the WhatsApp button. */
+  /* Phones: the bar is full width, so it sits above the quick-action bar and the WhatsApp button instead. */
   @media (max-width: 600px) {
-    .hero__bar { padding-right: var(--gutter); padding-bottom: calc(60px + 10px + 48px + 10px + env(safe-area-inset-bottom)); }
+    .hero__bar { padding-right: var(--gutter); padding-bottom: var(--wa-clear-y); }
+  }
+  /* Short phones: a smaller logo and tighter spacing keep the whole hero on screen, so the bar stays clear of the button. */
+  @media (max-width: 600px) and (max-height: 700px) {
+    .hero__content { padding-top: calc(var(--header-h) + 4px); padding-bottom: 12px; }
+    .hero__logo { width: 104px; }
+    .hero__tag { margin-top: 14px; }
   }
 
   /* ---------- Intro band ---------- */
@@ -790,13 +807,34 @@ const chapters = [
     let current = 0;
     let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let onScreen = true;
+    const imgOf = (i: number) => slides[i % slides.length].querySelector('img')!;
+    // Attach a deferred slide's sources so it downloads ahead of its turn.
+    const prime = (i: number) => {
+      const im = imgOf(i);
+      if (im.dataset.srcset) {
+        im.srcset = im.dataset.srcset;
+        im.src = im.dataset.src!;
+        delete im.dataset.srcset;
+      }
+    };
     const show = (next: number) => {
-      slides[current].classList.remove('is-active');
-      slides[current].setAttribute('aria-hidden', 'true');
-      current = (next + slides.length) % slides.length;
+      const target = (next + slides.length) % slides.length;
+      prime(target);
+      if (!imgOf(target).complete) return; // still loading: try again on the next tick
+      const leaving = slides[current];
+      leaving.classList.replace('is-active', 'is-leaving');
+      leaving.setAttribute('aria-hidden', 'true');
+      setTimeout(() => leaving.classList.remove('is-leaving'), 1600);
+      current = target;
       slides[current].classList.add('is-active');
       slides[current].removeAttribute('aria-hidden');
+      prime(current + 1);
     };
+    // Fetch the second photo once the page has finished loading (not for reduced-motion visitors, who never see it).
+    if (!paused) {
+      if (document.readyState === 'complete') prime(1);
+      else addEventListener('load', () => prime(1), { once: true });
+    }
     const sync = () => {
       hero.classList.toggle('is-paused', paused);
       toggle.innerHTML = paused ? playIcon : pauseIcon;
@@ -806,6 +844,7 @@ const chapters = [
     setInterval(() => !paused && onScreen && !document.hidden && show(current + 1), 6000);
     toggle.addEventListener('click', () => {
       paused = !paused;
+      if (!paused) prime(current + 1);
       sync();
     });
     sync();

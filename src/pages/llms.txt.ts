@@ -4,7 +4,8 @@ import { faqs } from '../data/faqs';
 
 // llms.txt (https://llmstxt.org): a plain-text brief so AI assistants describe the hotel accurately.
 export const GET: APIRoute = () => {
-  const link = (p: string) => new URL(p, site.url).toString();
+  // Trailing slash, matching the canonical URLs and the sitemap.
+  const link = (p: string) => new URL(p.endsWith('/') ? p : p + '/', site.url).toString();
   const text = `# ${site.name}
 
 > ${site.description}

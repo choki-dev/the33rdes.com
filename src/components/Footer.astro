@@ -100,7 +100,8 @@ const links = [
     .footer__bottom { flex-direction: column; align-items: center; }
   }
   @media (max-width: 600px) {
-    .footer { padding-bottom: 60px; }
+    /* Clear the quick-action bar and the WhatsApp button floating above it. */
+    .footer { padding-bottom: var(--wa-clear-y); }
     /* Taller rows so each link is a comfortable tap target. */
     .footer__nav { gap: 0 22px; }
     .footer__nav a, .footer__bottom a { display: inline-flex; align-items: center; min-height: 44px; }

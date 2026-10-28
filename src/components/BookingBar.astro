@@ -69,7 +69,7 @@ const steppers = [
   .bbar__value--text { font-family: var(--font-display); font-size: 1.45rem; min-height: 2.6rem; }
   .bbar__submit { min-height: auto; height: auto; padding: 0 40px; border-radius: 0; }
 
-  .bbar__pop { position: absolute; top: calc(100% + 10px); z-index: 30; scroll-margin: calc(var(--header-h) + 12px) 0 96px; }
+  .bbar__pop { position: absolute; top: calc(100% + 10px); z-index: 30; }
   .bbar--hero .bbar__pop { top: auto; bottom: calc(100% + 10px); }
   .bbar__pop--dates { left: 0; }
   .bbar__pop--guests {
@@ -103,13 +103,26 @@ const steppers = [
     const input = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
     const pops = form.querySelectorAll<HTMLElement>('[data-pop]');
     const close = () => pops.forEach((p) => (p.hidden = true));
+    // Bottom of the screen area not covered by fixed chrome (phone quick-action bar, WhatsApp button).
+    const visibleBottom = () =>
+      Math.min(
+        innerHeight,
+        ...[...document.querySelectorAll<HTMLElement>('.mbar, .wa')]
+          .filter((el) => getComputedStyle(el).display !== 'none')
+          .map((el) => el.getBoundingClientRect().top),
+      );
     const toggle = (name: string) =>
       pops.forEach((p) => {
         p.hidden = p.dataset.pop !== name ? true : !p.hidden;
-        // On small screens the picker can open below the fold; bring it fully into view.
+        // On small screens the picker can open below the fold or under the fixed bottom bar / WhatsApp button:
+        // scroll just enough to show it between the header and that chrome (its top wins if it cannot all fit).
         if (!p.hidden) {
           const r = p.getBoundingClientRect();
-          if (r.bottom > innerHeight || r.top < 0) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          const top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) + 12;
+          const bottom = visibleBottom() - 12;
+          if (r.bottom > bottom || r.top < top) {
+            scrollBy({ top: r.bottom > bottom ? Math.min(r.bottom - bottom, r.top - top) : r.top - top, behavior: 'smooth' });
+          }
         }
       });
 
