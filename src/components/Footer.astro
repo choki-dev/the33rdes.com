@@ -99,6 +99,8 @@ const links = [
   }
   @media (max-width: 600px) {
     .footer { padding-bottom: 60px; }
-    .footer__nav { gap: 10px 22px; }
+    /* Taller rows so each link is a comfortable tap target. */
+    .footer__nav { gap: 0 22px; }
+    .footer__nav a, .footer__bottom a { display: inline-flex; align-items: center; min-height: 44px; }
   }
 </style>

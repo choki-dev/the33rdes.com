@@ -16,6 +16,8 @@ export const site = {
     country: 'Bhutan',
     full: 'Babesa Highway, Thimphu 11001, Bhutan',
   },
+  // Map pin for search engines and AI answers (approximate, Babesa — confirm against Google Maps and refine).
+  geo: { lat: 27.4446, lng: 89.6536 },
   mapUrl: 'https://www.google.com/maps/search/?api=1&query=The+33rd+Executive+Suites+Thimphu',
   mapEmbed:
     'https://www.google.com/maps?q=The+33rd+Executive+Suites,+Babesa,+Thimphu,+Bhutan&output=embed',

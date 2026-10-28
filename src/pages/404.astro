@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import { img } from '../lib/images';
 ---
-<Base title="Page not found">
+<Base title="Page not found" noindex>
   <PageHero image={img('home-2')} eyebrow="404" title="This page has <em>wandered off</em>" subtitle="The page you are looking for may have moved. Let us guide you back.">
     <div class="actions">
       <a class="btn" href="/">Return home</a>

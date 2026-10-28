@@ -19,7 +19,7 @@ const after = experiences[(index + 2) % experiences.length];
 // No online forms on experience pages: guests call to reserve, book or plan.
 const callLabel = { dining: 'Call to reserve a table', spa: 'Call to book a treatment', event: 'Call to plan your event', none: null }[xp.reserve];
 ---
-<Base title={xp.name} description={xp.intro}>
+<Base title={xp.name} description={xp.intro} image={img(xp.hero)} imageAlt={`${xp.name} at ${site.name}, Thimphu`}>
   <PageHero image={img(xp.hero)} eyebrow={xp.kind} title={xp.name} subtitle={xp.tagline} />
 
   <section class="section">

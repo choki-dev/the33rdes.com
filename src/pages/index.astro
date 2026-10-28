@@ -81,12 +81,14 @@ const chapters = [
 ];
 ---
 <Base>
+  <link slot="head" rel="preload" as="image" href={site.heroVideo.poster} fetchpriority="high" />
   <!-- ============ HERO: logo-led, over film ============ -->
   <section class="hero" aria-label="Welcome">
     <div class="hero__media">
-      <video class="hero__video" autoplay muted loop playsinline preload="auto" poster={site.heroVideo.poster} data-hero-video>
-        <source src={site.heroVideo.webm} type="video/webm" />
-        <source src={site.heroVideo.mp4} type="video/mp4" />
+      <!-- The poster paints first; the film's sources are attached by script after load (skipped on Save-Data / reduced motion). -->
+      <video class="hero__video" muted loop playsinline preload="none" poster={site.heroVideo.poster} data-hero-video>
+        <source data-src={site.heroVideo.webm} type="video/webm" />
+        <source data-src={site.heroVideo.mp4} type="video/mp4" />
       </video>
     </div>
     <div class="hero__veil"></div>
@@ -386,9 +388,10 @@ const chapters = [
   /* ---------- Hero ---------- */
   .hero {
     position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto;
-    color: var(--ivory); background: #000; overflow: hidden;
+    color: var(--ivory); background: #000;
   }
-  .hero__media { position: absolute; inset: 0; }
+  /* Only the film is clipped, so the booking bar's calendar can open below the hero on phones. */
+  .hero__media { position: absolute; inset: 0; overflow: hidden; }
   .hero__video { width: 100%; height: 100%; object-fit: cover; opacity: .72; }
   .hero__veil {
     position: absolute; inset: 0;
@@ -406,7 +409,7 @@ const chapters = [
     margin: 28px 0 0; font-size: .74rem; letter-spacing: .34em; text-transform: uppercase; color: #e8e2d6;
     animation: rise 1.6s var(--ease-out) .7s both;
   }
-  .hero__bar { position: relative; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both; }
+  .hero__bar { position: relative; z-index: 5; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both; }
   .hero__sound {
     position: absolute; right: var(--gutter); top: calc(var(--header-h) + 24px);
     width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
@@ -415,7 +418,7 @@ const chapters = [
   .hero__sound:hover { background: rgba(0, 0, 0, .6); }
   @keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
   @media (max-width: 640px) {
-    .hero__tag { font-size: .62rem; letter-spacing: .24em; }
+    .hero__tag { font-size: .7rem; letter-spacing: .2em; }
     .hero__bar { padding-bottom: 24px; }
   }
 
@@ -460,7 +463,7 @@ const chapters = [
   }
 
   /* ---------- Rooms: gallery carousel ---------- */
-  .rooms { background: var(--sand); padding-bottom: calc(var(--section) * .5); }
+  .rooms { background: var(--sand); padding-block: var(--section) var(--section-half); }
   .rooms__head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: clamp(40px, 6vw, 72px); }
   .rooms__head h2 { margin: 0; }
   .rooms__head p { color: var(--muted); max-width: 46ch; }
@@ -499,7 +502,7 @@ const chapters = [
   }
 
   /* ---------- Experiences showcase (light) ---------- */
-  .lux { position: relative; overflow: hidden; padding-block: calc(var(--section) * .5) var(--section); background: var(--white); }
+  .lux { position: relative; overflow: hidden; padding-block: var(--section-half); background: var(--white); }
   .lux__head { text-align: center; max-width: 760px; margin-bottom: clamp(56px, 8vw, 104px); }
   .lux__head h2 { font-size: clamp(1.7rem, 2.9vw, 2.5rem); }
   .lux__head p { color: var(--muted); margin: 0 auto; max-width: 52ch; }
@@ -557,7 +560,7 @@ const chapters = [
   /* Green veg band: deep forest green, leaf pattern, stacked round plates and a spinning badge. */
   .veg {
     --veg: #1f3a2b; --veg-2: #2b4d39; --lime: #c9d98a;
-    position: relative; overflow: hidden; color: var(--ivory); padding-block: clamp(80px, 10vw, 140px);
+    position: relative; overflow: hidden; color: var(--ivory); padding-block: var(--section-half);
     background:
       radial-gradient(circle at 15% 20%, rgba(201, 217, 138, .14), transparent 45%),
       radial-gradient(circle at 90% 85%, rgba(174, 148, 79, .18), transparent 40%),
@@ -606,7 +609,7 @@ const chapters = [
   }
 
   /* ---------- Bakery ---------- */
-  .bakery { background: var(--sand); }
+  .bakery { background: var(--sand); padding-block: var(--section-half); }
   .bakery .lead { margin-bottom: 0; }
   .triptych { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 18px; align-items: center; margin-block: clamp(40px, 6vw, 72px); }
   .triptych__item { aspect-ratio: 3 / 4; }
@@ -617,7 +620,7 @@ const chapters = [
   }
 
   /* ---------- Includes ---------- */
-  .includes { background: var(--white); }
+  .includes { background: var(--white); padding-block: var(--section-half); }
   .includes__grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: clamp(40px, 7vw, 110px); align-items: start; }
   .includes__grid h2 { margin-bottom: 28px; }
   .includes__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 28px; }
@@ -630,8 +633,8 @@ const chapters = [
   }
 
   /* ---------- Discover & Story: one stone band, after bhutanspiritsanctuary.com ---------- */
-  .discover { background: var(--sand); padding-block: clamp(72px, 9vw, 120px) clamp(100px, 11vw, 150px); }
-  .story { background: var(--white); padding-block: clamp(72px, 9vw, 120px); }
+  .discover { background: var(--sand); padding-block: var(--section-half); }
+  .story { background: var(--white); padding-block: var(--section-half); }
   .band__wrap { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
   .band__head { text-align: center; margin-bottom: clamp(36px, 5vw, 56px); }
   .band__head h2 { margin-bottom: 4px; }
@@ -752,8 +755,22 @@ const chapters = [
       toggle.innerHTML = video.paused ? playIcon : pauseIcon;
       toggle.setAttribute('aria-label', video.paused ? 'Play background video' : 'Pause background video');
     };
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) video.pause();
-    toggle.addEventListener('click', () => (video.paused ? video.play() : video.pause()));
+    let loaded = false;
+    const start = () => {
+      if (!loaded) {
+        video.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => (s.src = s.dataset.src!));
+        video.load();
+        loaded = true;
+      }
+      video.play().catch(() => {});
+    };
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    if (!saveData && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // Wait for the page's own load so the film never competes with the first paint.
+      if (document.readyState === 'complete') start();
+      else addEventListener('load', start, { once: true });
+    }
+    toggle.addEventListener('click', () => (video.paused ? start() : video.pause()));
     video.addEventListener('play', sync);
     video.addEventListener('pause', sync);
     sync();
