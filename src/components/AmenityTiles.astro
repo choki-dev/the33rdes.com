@@ -43,8 +43,8 @@ const tick = '<path d="M5 12.5 10 17 19 7"/>';
   .amen { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .amen li {
     display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-    background: var(--white); border: 1px solid transparent; font-size: .76rem; line-height: 1.3; color: var(--charcoal);
-    transition: background .4s var(--ease), color .4s, transform .4s var(--ease), border-color .4s;
+    background: var(--white); font-size: .76rem; line-height: 1.3; color: var(--charcoal);
+    transition: background .4s var(--ease), color .4s, transform .4s var(--ease);
   }
   .amen__icon {
     flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
@@ -61,9 +61,9 @@ const tick = '<path d="M5 12.5 10 17 19 7"/>';
   /* Beside the booking card on the room page the column is narrow. */
   @media (max-width: 1200px) and (min-width: 1001px) { .amen:not(.amen--wide) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) {
-    .amen, .amen--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .amen { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .amen li { padding: 10px; gap: 10px; }
     .amen--wide .amen__icon { width: 32px; height: 32px; }
   }
-  @media (max-width: 380px) { .amen, .amen--wide { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 380px) { .amen { grid-template-columns: minmax(0, 1fr); } }
 </style>

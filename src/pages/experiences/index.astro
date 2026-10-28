@@ -48,7 +48,7 @@ const themes = [
 <Base title="Experiences" description="Pure vegetarian dining, Salts Rooftop Bar, Sugar Box Café, Om Spa, the fitness centre, The Boardroom and journeys around Thimphu at The 33rd Executive Suites.">
   <PageHero image={img('food-zheycha')} eyebrow="The 33rd" title="Experiences" />
 
-  <section class="xintro">
+  <section class="section xintro">
     <div class="container container--narrow">
       <Image src={logoDark} alt="" width={240} class="xemblem" />
       <p>From pure vegetarian dining and a rooftop bar seven floors above Thimphu to a quiet spa and journeys through the valley — everything you need to slow down is under one roof, and the rest is a short drive away.</p>
@@ -56,7 +56,7 @@ const themes = [
   </section>
 
   {themes.map((t, i) => (
-    <section class:list={['xtheme', { 'xtheme--flip': i % 2 === 1 }]} aria-labelledby={`xt-${i}`}>
+    <section class:list={['section xtheme', { 'xtheme--flip': i % 2 === 1 }]} aria-labelledby={`xt-${i}`}>
       <div class="container xtheme__grid">
         <div class="xtheme__text reveal">
           <span class="xtheme__num">0{i + 1}</span>
@@ -83,7 +83,7 @@ const themes = [
     </section>
   ))}
 
-  <section class="xinc" aria-labelledby="xinc-title">
+  <section class="section xinc" aria-labelledby="xinc-title">
     <div class="container">
       <h2 id="xinc-title" class="reveal">All stays include</h2>
       <ul class="xinc__list">
@@ -104,12 +104,12 @@ const themes = [
 
 <style>
   /* ---------- Intro ---------- */
-  .xintro { background: var(--white); text-align: center; padding-block: var(--section-half); }
+  .xintro { background: var(--white); text-align: center; }
   .xemblem { display: block; width: 120px; height: auto; margin: 0 auto 28px; }
   .xintro p { max-width: 70ch; margin: 0 auto; color: var(--muted); line-height: 1.95; }
 
   /* ---------- Themes ---------- */
-  .xtheme { background: var(--white); padding-block: var(--section-half); border-top: 1px solid var(--stone); }
+  .xtheme { background: var(--white); border-top: 1px solid var(--stone); }
   .xtheme--flip { background: #f4f4f4; border-top: 0; }
   .xtheme__grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(40px, 7vw, 120px); align-items: center; }
   .xtheme--flip .xtheme__text { order: 2; }
@@ -142,7 +142,7 @@ const themes = [
   }
 
   /* ---------- All stays include ---------- */
-  .xinc { background: var(--sand); padding-block: var(--section-half); text-align: center; }
+  .xinc { background: var(--sand); text-align: center; }
   .xinc h2 { font-family: var(--font-ui); font-size: .8rem; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--ink); margin-bottom: clamp(36px, 5vw, 56px); }
   .xinc__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 28px; }
   .xinc__list li { display: flex; flex-direction: column; align-items: center; gap: 6px; }

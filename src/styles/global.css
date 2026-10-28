@@ -58,7 +58,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Scrolled-to content stops clear of the fixed header and the bottom chrome (phone bar, WhatsApp button). */
   scroll-padding-top: var(--header-h);
+  scroll-padding-bottom: var(--wa-clear-y);
 }
 
 body {

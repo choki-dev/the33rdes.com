@@ -12,8 +12,9 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MobileBookBar from '../components/MobileBookBar.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import { experiences, rooms, site } from '../data/site';
-import { img } from '../lib/images';
+import { site } from '../data/site';
+import { hotel, hotelId, hotelRef, defaultShareImage, shareSize } from '../lib/schema';
+import { assetUrl, base, pageUrl } from '../lib/urls';
 
 interface Props {
   title?: string;
@@ -45,82 +46,30 @@ const clip = (text: string, max = 158) => {
 };
 const description = clip(fullDescription);
 const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — Luxury Boutique Hotel in Thimphu, Bhutan`;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const path = Astro.url.pathname.slice(base.length) || '/';
-const canonical = new URL(path, site.url).toString();
-// Files are fetched from wherever this build is hosted (the preview lives under a sub-path), unlike the
-// canonical page URLs, which always name the production site. getImage() paths already carry the base.
-const asset = (p: string) => new URL(p.startsWith(base + '/') ? p : base + p, Astro.site ?? site.url).toString();
-const shareSize = { width: 1200, format: 'jpg', quality: 80 } as const;
-const defaultShare = asset((await getImage({ src: img('valley-1'), ...shareSize })).src);
+const canonical = pageUrl(path);
 const ogImage =
-  image === undefined ? defaultShare : asset(typeof image === 'string' ? image : (await getImage({ src: image, ...shareSize })).src);
-
-const hotelId = `${site.url}/#hotel`;
-const hotel = {
-  '@type': 'Hotel',
-  '@id': hotelId,
-  name: site.name,
-  alternateName: site.shortName,
-  description: site.description,
-  slogan: site.tagline,
-  url: site.url,
-  telephone: site.phone,
-  email: site.email,
-  image: defaultShare,
-  logo: asset('/favicon.png'),
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.address.street,
-    addressLocality: site.address.city,
-    addressRegion: 'Thimphu',
-    postalCode: site.address.postalCode,
-    addressCountry: 'BT',
-  },
-  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
-  hasMap: site.mapUrl,
-  areaServed: { '@type': 'City', name: 'Thimphu' },
-  checkinTime: '14:00',
-  checkoutTime: '12:00',
-  numberOfRooms: 68,
-  servesCuisine: ['Vegetarian', 'Vegan', 'Bhutanese'],
-  amenityFeature: ['Spa', 'Rooftop bar', 'Restaurant', 'Vegetarian restaurant', 'Fitness centre', 'Free Wi-Fi', 'Free parking', 'Meeting room', '24-hour room service', 'Airport transfer'].map((name) => ({
-    '@type': 'LocationFeatureSpecification',
-    name,
-    value: true,
-  })),
-  containsPlace: [
-    ...rooms.map((r) => ({
-      '@type': 'HotelRoom',
-      name: r.name,
-      url: new URL(`/rooms/${r.slug}/`, site.url).toString(),
-      description: r.description,
-      occupancy: { '@type': 'QuantitativeValue', maxValue: r.capacity },
-      bed: r.bed,
-    })),
-    ...experiences.map((x) => ({ '@type': 'Place', name: x.name, description: x.kind, url: new URL(`/experiences/${x.slug}/`, site.url).toString() })),
-  ],
-  sameAs: Object.values(site.social),
-};
+  image === undefined ? defaultShareImage : assetUrl(typeof image === 'string' ? image : (await getImage({ src: image, ...shareSize })).src);
 
 // Breadcrumbs from the URL: Home › section › page.
 const sectionNames: Record<string, string> = { rooms: 'Rooms & Suites', experiences: 'Experiences' };
 const segments = path.split('/').filter(Boolean);
-const crumbs = segments.length
-  ? [
-      { name: 'Home', url: site.url + '/' },
-      ...segments.map((s, i) => ({
-        name: i === segments.length - 1 ? (title ?? s) : (sectionNames[s] ?? s),
-        url: new URL('/' + segments.slice(0, i + 1).join('/') + '/', site.url).toString(),
-      })),
-    ]
-  : [];
+const breadcrumbs = segments.length && {
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { name: 'Home', path: '/' },
+    ...segments.map((s, i) => ({
+      name: i === segments.length - 1 ? (title ?? s) : (sectionNames[s] ?? s),
+      path: '/' + segments.slice(0, i + 1).join('/'),
+    })),
+  ].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: pageUrl(c.path) })),
+};
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    hotel,
-    { '@type': 'WebSite', '@id': `${site.url}/#website`, url: site.url, name: site.name, publisher: { '@id': hotelId }, inLanguage: 'en' },
+    path === '/' ? hotel : hotelRef,
+    { '@type': 'WebSite', '@id': `${site.url}/#website`, url: pageUrl('/'), name: site.name, publisher: { '@id': hotelId }, inLanguage: 'en' },
     {
       '@type': 'WebPage',
       '@id': `${canonical}#webpage`,
@@ -132,10 +81,8 @@ const jsonLd = {
       primaryImageOfPage: ogImage,
       inLanguage: 'en',
     },
-    ...(crumbs.length
-      ? [{ '@type': 'BreadcrumbList', itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: c.url })) }]
-      : []),
-  ],
+    breadcrumbs,
+  ].filter(Boolean),
 };
 ---
 <!doctype html>

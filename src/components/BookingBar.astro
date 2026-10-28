@@ -103,27 +103,12 @@ const steppers = [
     const input = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
     const pops = form.querySelectorAll<HTMLElement>('[data-pop]');
     const close = () => pops.forEach((p) => (p.hidden = true));
-    // Bottom of the screen area not covered by fixed chrome (phone quick-action bar, WhatsApp button).
-    const visibleBottom = () =>
-      Math.min(
-        innerHeight,
-        ...[...document.querySelectorAll<HTMLElement>('.mbar, .wa')]
-          .filter((el) => getComputedStyle(el).display !== 'none')
-          .map((el) => el.getBoundingClientRect().top),
-      );
     const toggle = (name: string) =>
       pops.forEach((p) => {
         p.hidden = p.dataset.pop !== name ? true : !p.hidden;
-        // On small screens the picker can open below the fold or under the fixed bottom bar / WhatsApp button:
-        // scroll just enough to show it between the header and that chrome (its top wins if it cannot all fit).
-        if (!p.hidden) {
-          const r = p.getBoundingClientRect();
-          const top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) + 12;
-          const bottom = visibleBottom() - 12;
-          if (r.bottom > bottom || r.top < top) {
-            scrollBy({ top: r.bottom > bottom ? Math.min(r.bottom - bottom, r.top - top) : r.top - top, behavior: 'smooth' });
-          }
-        }
+        // On small screens the picker can open below the fold or under the fixed bottom bar / WhatsApp button;
+        // the page's scroll-padding keeps it clear of that chrome and the header.
+        if (!p.hidden) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       });
 
     const paint = () => {

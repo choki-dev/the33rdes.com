@@ -5,10 +5,10 @@ import logoLight from '../assets/logo-light.png';
 import logoDark from '../assets/logo-dark.png';
 import { nav, site } from '../data/site';
 import { img } from '../lib/images';
+import { base } from '../lib/urls';
 
 interface Props { overlay?: boolean }
 const { overlay = true } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const path = Astro.url.pathname.slice(base.length).replace(/\/$/, '') || '/';
 const isActive = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
 const previews = nav.flatMap((n) => ('image' in n ? [{ href: n.href, image: n.image }] : []));

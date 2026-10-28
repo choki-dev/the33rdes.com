@@ -26,7 +26,7 @@ const heroSlides = [
 const heroWidths = [800, 1400, 2000, 2560];
 // Slides after the first are written without src/srcset; the script fills them in just before each is shown.
 const laterSlides = await Promise.all(
-  heroSlides.slice(1).map((s) => getImage({ src: img(s.key), widths: heroWidths, sizes: '100vw' })),
+  heroSlides.slice(1).map(async (s) => ({ alt: s.alt, im: await getImage({ src: img(s.key), widths: heroWidths, sizes: '100vw' }) })),
 );
 
 const chapters = [
@@ -101,10 +101,10 @@ const chapters = [
       <div class="hero__slide is-active">
         <Image src={img(heroSlides[0].key)} alt={heroSlides[0].alt} widths={heroWidths} sizes="100vw" loading="eager" fetchpriority="high" />
       </div>
-      {laterSlides.map((im, i) => (
+      {laterSlides.map(({ alt, im }) => (
         <div class="hero__slide" aria-hidden="true">
           <img
-            alt={heroSlides[i + 1].alt}
+            alt={alt}
             data-src={im.src}
             data-srcset={im.srcSet.attribute}
             sizes="100vw"
@@ -221,7 +221,7 @@ const chapters = [
   </section>
 
   <!-- ============ EXPERIENCES: dark, immersive showcase ============ -->
-  <section class="lux" aria-labelledby="lux-title" data-lux>
+  <section class="section lux" aria-labelledby="lux-title" data-lux>
     <div class="container lux__head reveal">
       <span class="eyebrow eyebrow--center">The 33rd experience</span>
       <h2 id="lux-title">Dine, unwind, <em>restore</em> &amp; gather</h2>
@@ -272,7 +272,7 @@ const chapters = [
   </section>
 
   <!-- ============ STATEMENT: green veg band, plates + spinning badge ============ -->
-  <section class="veg" aria-label="Pure vegetarian dining">
+  <section class="section veg" aria-label="Pure vegetarian dining">
     <div class="container veg__grid">
       <div class="veg__plates reveal" aria-hidden="true">
         <div class="veg__plate veg__plate--lg"><Image src={img('food-zheycha')} alt="" widths={[400, 700]} sizes="(max-width: 860px) 70vw, 420px" /></div>
@@ -335,7 +335,7 @@ const chapters = [
   </section>
 
   <!-- ============ DISCOVER THIMPHU ============ -->
-  <section class="discover" aria-labelledby="discover-title">
+  <section class="section discover" aria-labelledby="discover-title">
     <div class="band__wrap">
       <header class="band__head reveal">
         <h2 id="discover-title">Discover Thimphu</h2>
@@ -384,7 +384,7 @@ const chapters = [
   </section>
 
   <!-- ============ OUR STORY ============ -->
-  <section class="story" aria-labelledby="story-title">
+  <section class="section story" aria-labelledby="story-title">
     <div class="band__wrap">
       <div class="story__trio">
         <div class="story__tile reveal">
@@ -514,7 +514,7 @@ const chapters = [
   }
 
   /* ---------- Rooms: gallery carousel ---------- */
-  .rooms { background: var(--sand); padding-block: var(--section) var(--section-half); }
+  .rooms { background: var(--sand); padding-top: var(--section); }
   .rooms__head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 64px; align-items: end; margin-bottom: clamp(40px, 6vw, 72px); }
   .rooms__head h2 { margin: 0; }
   .rooms__head p { color: var(--muted); max-width: 46ch; }
@@ -553,7 +553,7 @@ const chapters = [
   }
 
   /* ---------- Experiences showcase (light) ---------- */
-  .lux { position: relative; overflow: hidden; padding-block: var(--section-half); background: var(--white); }
+  .lux { position: relative; overflow: hidden; background: var(--white); }
   .lux__head { text-align: center; max-width: 760px; margin-bottom: clamp(56px, 8vw, 104px); }
   .lux__head h2 { font-size: clamp(1.7rem, 2.9vw, 2.5rem); }
   .lux__head p { color: var(--muted); margin: 0 auto; max-width: 52ch; }
@@ -611,7 +611,7 @@ const chapters = [
   /* Green veg band: deep forest green, leaf pattern, stacked round plates and a spinning badge. */
   .veg {
     --veg: #1f3a2b; --veg-2: #2b4d39; --lime: #c9d98a;
-    position: relative; overflow: hidden; color: var(--ivory); padding-block: var(--section-half);
+    position: relative; overflow: hidden; color: var(--ivory);
     background:
       radial-gradient(circle at 15% 20%, rgba(201, 217, 138, .14), transparent 45%),
       radial-gradient(circle at 90% 85%, rgba(174, 148, 79, .18), transparent 40%),
@@ -660,7 +660,7 @@ const chapters = [
   }
 
   /* ---------- Bakery ---------- */
-  .bakery { background: var(--sand); padding-block: var(--section-half); }
+  .bakery { background: var(--sand); }
   .bakery .lead { margin-bottom: 0; }
   .triptych { display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 18px; align-items: center; margin-block: clamp(40px, 6vw, 72px); }
   .triptych__item { aspect-ratio: 3 / 4; }
@@ -671,7 +671,7 @@ const chapters = [
   }
 
   /* ---------- Includes ---------- */
-  .includes { background: var(--white); padding-block: var(--section-half); }
+  .includes { background: var(--white); }
   .includes__grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: clamp(40px, 7vw, 110px); align-items: start; }
   .includes__grid h2 { margin-bottom: 28px; }
   .includes__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 28px; }
@@ -684,8 +684,8 @@ const chapters = [
   }
 
   /* ---------- Discover & Story: one stone band, after bhutanspiritsanctuary.com ---------- */
-  .discover { background: var(--sand); padding-block: var(--section-half); }
-  .story { background: var(--white); padding-block: var(--section-half); }
+  .discover { background: var(--sand); }
+  .story { background: var(--white); }
   .band__wrap { max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
   .band__head { text-align: center; margin-bottom: clamp(36px, 5vw, 56px); }
   .band__head h2 { margin-bottom: 4px; }

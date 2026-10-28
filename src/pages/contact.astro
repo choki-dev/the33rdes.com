@@ -44,7 +44,7 @@ const faqLd = {
       <div class="faq__list">
         {faqs.map((f) => (
           <details>
-            <summary>{f.q}</summary>
+            <summary>{f.q}<Icon name="plus" size={16} /></summary>
             <p>{f.a}</p>
           </details>
         ))}
@@ -75,8 +75,8 @@ const faqLd = {
     font-family: var(--font-display); font-size: var(--fs-detail); color: var(--ink); cursor: pointer; list-style: none;
   }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: '+'; flex: none; font-family: var(--font-ui); font-size: 1.2rem; color: var(--gold-deep); transition: transform .3s var(--ease); }
-  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq summary :global(svg) { flex: none; color: var(--gold-deep); transition: transform .3s var(--ease); }
+  .faq details[open] summary :global(svg) { transform: rotate(45deg); }
   .faq details p { margin: 0 0 22px; max-width: 70ch; color: var(--muted); line-height: 1.85; }
   .map iframe { display: block; width: 100%; height: 480px; border: 0; filter: grayscale(.6) sepia(.15); }
   @media (max-width: 900px) { .contact { grid-template-columns: 1fr; } }
