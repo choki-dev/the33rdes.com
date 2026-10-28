@@ -15,6 +15,15 @@ const xp = Object.fromEntries(experiences.map((e) => [e.slug, e]));
 const signature = rooms.find((r) => r.featured) ?? rooms[0];
 const otherRooms = rooms.filter((r) => r !== signature);
 
+// Hero slideshow: the first photo is the page's main image; the rest load quietly behind it.
+const heroSlides = [
+  { key: 'valley-1', alt: 'A sitting room looking out across the valley to the nunnery' },
+  { key: 'lobby-2', alt: 'The lobby lounge with floor-to-ceiling windows onto the hills' },
+  { key: 'valley-suite-1', alt: 'The Valley Suite bedroom' },
+  { key: 'dining-4', alt: 'Artisan’s Table restaurant laid for dinner' },
+  { key: 'lobby-1', alt: 'The hotel lobby with a traditional Bhutanese thangka' },
+];
+
 const chapters = [
   {
     kicker: 'Taste',
@@ -81,15 +90,21 @@ const chapters = [
 ];
 ---
 <Base>
-  <link slot="head" rel="preload" as="image" href={site.heroVideo.poster} fetchpriority="high" />
-  <!-- ============ HERO: logo-led, over film ============ -->
+  <!-- ============ HERO: logo-led, over a photo slideshow ============ -->
   <section class="hero" aria-label="Welcome">
-    <div class="hero__media">
-      <!-- The poster paints first; the film's sources are attached by script after load (skipped on Save-Data / reduced motion). -->
-      <video class="hero__video" muted loop playsinline preload="none" poster={site.heroVideo.poster} data-hero-video>
-        <source data-src={site.heroVideo.webm} type="video/webm" />
-        <source data-src={site.heroVideo.mp4} type="video/mp4" />
-      </video>
+    <div class="hero__media" data-hero-slides>
+      {heroSlides.map((s, i) => (
+        <div class:list={['hero__slide', { 'is-active': i === 0 }]} aria-hidden={i === 0 ? undefined : 'true'}>
+          <Image
+            src={img(s.key)}
+            alt={s.alt}
+            widths={[800, 1400, 2000, 2560]}
+            sizes="100vw"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : 'low'}
+          />
+        </div>
+      ))}
     </div>
     <div class="hero__veil"></div>
 
@@ -97,14 +112,14 @@ const chapters = [
       <h1 class="hero__logo">
         <Image src={logoLight} alt={site.name} width={420} loading="eager" fetchpriority="high" />
       </h1>
-      <p class="hero__tag">A boutique luxury hotel &nbsp;·&nbsp; Thimphu, Bhutan</p>
+      <p class="hero__tag"><span>A boutique luxury hotel</span><span class="hero__sep" aria-hidden="true">&nbsp;·&nbsp;</span><span>Thimphu, Bhutan</span></p>
     </div>
 
     <div class="hero__bar container">
       <BookingBar variant="hero" />
     </div>
 
-    <button class="hero__sound" type="button" aria-label="Pause background video" data-video-toggle>
+    <button class="hero__sound" type="button" aria-label="Pause slideshow" data-hero-toggle>
       <Icon name="pause" size={14} />
     </button>
   </section>
@@ -390,9 +405,17 @@ const chapters = [
     position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto;
     color: var(--ivory); background: #000;
   }
-  /* Only the film is clipped, so the booking bar's calendar can open below the hero on phones. */
+  /* Only the photos are clipped, so the booking bar's calendar can open below the hero on phones. */
   .hero__media { position: absolute; inset: 0; overflow: hidden; }
-  .hero__video { width: 100%; height: 100%; object-fit: cover; opacity: .72; }
+  /* Slides crossfade; each one drifts in slowly while it is on screen. */
+  .hero__slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s var(--ease); }
+  .hero__slide.is-active { opacity: .72; }
+  .hero__slide :global(img) { width: 100%; height: 100%; object-fit: cover; transform: scale(1.08); transition: transform 8s linear; }
+  .hero__slide.is-active :global(img) { transform: scale(1); }
+  .hero.is-paused .hero__slide :global(img) { transition: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide, .hero__slide :global(img) { transition: none; transform: none; }
+  }
   .hero__veil {
     position: absolute; inset: 0;
     background:
@@ -418,7 +441,10 @@ const chapters = [
   .hero__sound:hover { background: rgba(0, 0, 0, .6); }
   @keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
   @media (max-width: 640px) {
-    .hero__tag { font-size: .7rem; letter-spacing: .2em; }
+    .hero__tag { font-size: .7rem; letter-spacing: .2em; line-height: 2; }
+    /* Two clean lines instead of a stray dot at a line end. */
+    .hero__tag span { display: block; }
+    .hero__tag .hero__sep { display: none; }
     .hero__bar { padding-bottom: 24px; }
   }
 
@@ -745,34 +771,35 @@ const chapters = [
 </script>
 
 <script>
-  // Pause/play hero video (also respects reduced-motion preference).
-  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
-  const toggle = document.querySelector<HTMLButtonElement>('[data-video-toggle]');
-  if (video && toggle) {
+  // Hero slideshow: crossfade every 6s while the hero is on screen; the round button pauses it.
+  // Reduced-motion visitors get the first photo only.
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const slides = [...document.querySelectorAll<HTMLElement>('[data-hero-slides] .hero__slide')];
+  const toggle = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+  if (hero && toggle && slides.length > 1) {
     const pauseIcon = toggle.innerHTML;
     const playIcon = '<svg width="14" height="14" viewBox="0 0 22 22" aria-hidden="true"><path d="M7 4.5v13l11-6.5z" fill="currentColor"/></svg>';
+    let current = 0;
+    let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let onScreen = true;
+    const show = (next: number) => {
+      slides[current].classList.remove('is-active');
+      slides[current].setAttribute('aria-hidden', 'true');
+      current = (next + slides.length) % slides.length;
+      slides[current].classList.add('is-active');
+      slides[current].removeAttribute('aria-hidden');
+    };
     const sync = () => {
-      toggle.innerHTML = video.paused ? playIcon : pauseIcon;
-      toggle.setAttribute('aria-label', video.paused ? 'Play background video' : 'Pause background video');
+      hero.classList.toggle('is-paused', paused);
+      toggle.innerHTML = paused ? playIcon : pauseIcon;
+      toggle.setAttribute('aria-label', paused ? 'Play slideshow' : 'Pause slideshow');
     };
-    let loaded = false;
-    const start = () => {
-      if (!loaded) {
-        video.querySelectorAll<HTMLSourceElement>('source[data-src]').forEach((s) => (s.src = s.dataset.src!));
-        video.load();
-        loaded = true;
-      }
-      video.play().catch(() => {});
-    };
-    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-    if (!saveData && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      // Wait for the page's own load so the film never competes with the first paint.
-      if (document.readyState === 'complete') start();
-      else addEventListener('load', start, { once: true });
-    }
-    toggle.addEventListener('click', () => (video.paused ? start() : video.pause()));
-    video.addEventListener('play', sync);
-    video.addEventListener('pause', sync);
+    new IntersectionObserver(([e]) => (onScreen = e.isIntersecting)).observe(hero);
+    setInterval(() => !paused && onScreen && !document.hidden && show(current + 1), 6000);
+    toggle.addEventListener('click', () => {
+      paused = !paused;
+      sync();
+    });
     sync();
   }
 

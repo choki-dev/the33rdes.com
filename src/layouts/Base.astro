@@ -13,6 +13,7 @@ import Footer from '../components/Footer.astro';
 import MobileBookBar from '../components/MobileBookBar.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
 import { experiences, rooms, site } from '../data/site';
+import { img } from '../lib/images';
 
 interface Props {
   title?: string;
@@ -28,7 +29,7 @@ interface Props {
 const {
   title,
   description: fullDescription = site.description,
-  image = '/video/hero-poster.jpg',
+  image = img('valley-1'),
   imageAlt,
   noindex = false,
   overlayHeader = true,
@@ -59,7 +60,7 @@ const hotel = {
   url: site.url,
   telephone: site.phone,
   email: site.email,
-  image: new URL('/video/hero-poster.jpg', site.url).toString(),
+  image: new URL((await getImage({ src: img('valley-1'), width: 1200, format: 'jpg', quality: 80 })).src, site.url).toString(),
   logo: new URL('/favicon.png', site.url).toString(),
   address: {
     '@type': 'PostalAddress',

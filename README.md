@@ -2,7 +2,7 @@
 
 Astro 7 site deployed to **Cloudflare Workers** (static pages + a small Worker for bookings).
 
-- **Design:** full-screen video hero (inspired by Bhutan Spirit Sanctuary), left side-drawer menu with a centred logo (inspired by Simtokha), EB Garamond headings with Montserrat Light text, palette taken from the logo (antique gold `#AE944F`, charcoal `#3A3836`, warm ivory).
+- **Design:** full-screen photo slideshow hero (inspired by Bhutan Spirit Sanctuary), left side-drawer menu with a centred logo (inspired by Simtokha), EB Garamond headings with Montserrat Light text, palette taken from the logo (antique gold `#AE944F`, charcoal `#3A3836`, warm ivory).
 - **Booking:** a hero booking bar with a range calendar and guest picker feeds a 4-step booking engine at `/book` (dates → room → extras → guest details → reference number). No rates are shown; the reservations team replies with availability and the rate. Restaurant, spa and event reservation forms are on each experience page, and there's a contact form.
 
 ## Commands
@@ -19,14 +19,14 @@ Astro 7 site deployed to **Cloudflare Workers** (static pages + a small Worker f
 
 | What | File |
 | --- | --- |
-| Contact details, socials, hero video, nav | `src/data/site.ts` → `site`, `nav` |
+| Contact details, socials, map link, nav | `src/data/site.ts` → `site`, `nav` |
 | Room descriptions, sizes, photos | `src/data/site.ts` → `rooms` |
 | Booking limits (max nights, max rooms) | `src/data/site.ts` → `policies` |
 | Optional extras (airport transfer, spa, etc.) | `src/data/site.ts` → `addons` |
 | Restaurant / bar / spa / boardroom copy & hours | `src/data/site.ts` → `experiences` |
 | Colours & fonts | `src/styles/global.css` (`:root` tokens) |
 | Photos | `src/assets/img/*.jpg` (optimised to WebP at build time) |
-| Hero video | `public/video/hero.mp4` + `hero.webm` + `hero-poster.jpg` |
+| Hero slideshow photos | `heroSlides` in `src/pages/index.astro` (keys from `src/assets/img`) |
 
 Booking requests are validated on both the page and the server with the same rules (`src/lib/stay.ts`).
 

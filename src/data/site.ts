@@ -16,11 +16,10 @@ export const site = {
     country: 'Bhutan',
     full: 'Babesa Highway, Thimphu 11001, Bhutan',
   },
-  // Map pin for search engines and AI answers (approximate, Babesa — confirm against Google Maps and refine).
-  geo: { lat: 27.4446, lng: 89.6536 },
-  mapUrl: 'https://www.google.com/maps/search/?api=1&query=The+33rd+Executive+Suites+Thimphu',
-  mapEmbed:
-    'https://www.google.com/maps?q=The+33rd+Executive+Suites,+Babesa,+Thimphu,+Bhutan&output=embed',
+  // Map pin for search engines and AI answers (from the hotel's Google Maps listing).
+  geo: { lat: 27.4368001, lng: 89.6546175 },
+  mapUrl: 'https://maps.app.goo.gl/jzqAUjQweg65MZNL8',
+  mapEmbed: 'https://www.google.com/maps?q=27.4368001,89.6546175&z=17&output=embed',
   phone: '+975 16993333',
   phoneHref: 'tel:+97516993333',
   whatsappHref: 'https://wa.me/97516993333',
@@ -35,12 +34,6 @@ export const site = {
   },
   checkIn: '2:00 PM',
   checkOut: '12:00 PM',
-  // Hero video. Replace /public/video/hero.* with the hotel's own film when ready.
-  heroVideo: {
-    webm: '/video/hero.webm?v=2',
-    mp4: '/video/hero.mp4?v=2',
-    poster: '/video/hero-poster.jpg?v=2',
-  },
 };
 
 export const nav = [
