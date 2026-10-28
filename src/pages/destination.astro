@@ -116,7 +116,7 @@ const groups = attractionCategories.map((c) => ({ ...c, places: attractions.filt
   .atitle p { max-width: 60ch; margin: 0 auto; color: var(--charcoal); font-size: 1rem; line-height: 1.95; }
 
   /* ---------- Side by side ---------- */
-  .aside { padding-block: clamp(40px, 6vw, 80px); }
+  .aside { padding-block: var(--section-half); }
   .aside__grid { display: grid; grid-template-columns: 2fr 1fr; gap: clamp(36px, 6vw, 96px); align-items: center; }
   .aside__media { aspect-ratio: 766 / 473; overflow: hidden; background: var(--stone); }
   .aside__media :global(img) { width: 100%; height: 100%; object-fit: cover; }
@@ -127,7 +127,7 @@ const groups = attractionCategories.map((c) => ({ ...c, places: attractions.filt
   }
 
   /* ---------- Themes: photo stage beside a numbered list ---------- */
-  .atheme { padding-block: clamp(72px, 9vw, 128px); scroll-margin-top: var(--header-h); }
+  .atheme { padding-block: var(--section-half); scroll-margin-top: var(--header-h); }
   .atheme--flip { background: var(--sand); }
   .atheme__head { display: grid; grid-template-columns: auto 1fr; gap: 8px clamp(24px, 4vw, 64px); margin-bottom: clamp(40px, 5vw, 64px); }
   .atheme__count { grid-row: span 2; padding-top: 14px; font-family: var(--font-ui); font-size: .64rem; letter-spacing: .26em; color: var(--gold-deep); }

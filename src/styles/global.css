@@ -31,6 +31,7 @@
   --container: 1520px;
   --gutter: clamp(16px, 4vw, 48px);
   --section: clamp(80px, 11vw, 160px);
+  --section-half: calc(var(--section) * .5);
   --radius: 2px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -107,7 +108,7 @@ p { margin: 0 0 1.25em; text-wrap: pretty; }
 /* ---------- Layout ---------- */
 .container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
 .container--narrow { max-width: 1040px; }
-.section { padding-block: var(--section); }
+.section { padding-block: var(--section-half); }
 .section--sand { background: var(--sand); }
 .section--dark { background: var(--ink); color: #d9d4ca; }
 .section--dark h2, .section--dark h3 { color: var(--ivory); }
@@ -249,7 +250,7 @@ p { margin: 0 0 1.25em; text-wrap: pretty; }
 
 /* ---------- Editorial pages (Our Story, Discover Thimphu) ----------
    A quiet stone band under a text-free hero; inside it, photographs paired with ivory text panels. */
-.ed-band { background: var(--stone); padding-block: clamp(64px, 8vw, 110px); }
+.ed-band { background: var(--stone); padding-block: var(--section-half); }
 .ed-wrap { width: 100%; max-width: 1100px; margin-inline: auto; padding-inline: var(--gutter); display: grid; gap: clamp(56px, 7vw, 90px); }
 .ed-intro { text-align: center; max-width: 720px; margin-inline: auto; }
 .ed-intro h1 { margin-bottom: 6px; }

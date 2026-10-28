@@ -3,7 +3,8 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
 import Icon from '../../components/Icon.astro';
-import { roomAmenities, rooms } from '../../data/site';
+import AmenityTiles from '../../components/AmenityTiles.astro';
+import { rooms } from '../../data/site';
 import { img } from '../../lib/images';
 ---
 <Base title="Rooms & Suites" description="Valley Suites, Executive Suites, Deluxe Suites, Deluxe Premium and Deluxe Standard rooms at The 33rd Executive Suites, Thimphu — each with a mini kitchen, bathtub and premium amenities.">
@@ -46,10 +47,8 @@ import { img } from '../../lib/images';
       <span class="eyebrow eyebrow--center">In every room</span>
       <h2>Amenities &amp; <em>comforts</em></h2>
     </div>
-    <div class="container">
-      <ul class="amenities reveal">
-        {roomAmenities.map((a) => <li><Icon name="check" size={18} />{a}</li>)}
-      </ul>
+    <div class="container amenities">
+      <AmenityTiles wide />
     </div>
   </section>
 </Base>
@@ -72,12 +71,5 @@ import { img } from '../../lib/images';
     .room { grid-template-columns: 1fr; }
     .room--flip .room__media { order: 0; }
   }
-  .amenities {
-    list-style: none; padding: 0; margin: 48px 0 0;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 40px;
-  }
-  .amenities li { display: flex; align-items: center; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--stone); }
-  .amenities :global(svg) { color: var(--gold); flex: none; }
-  @media (max-width: 900px) { .amenities { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .amenities { grid-template-columns: 1fr; } }
+  .amenities { margin-top: clamp(32px, 4vw, 48px); }
 </style>

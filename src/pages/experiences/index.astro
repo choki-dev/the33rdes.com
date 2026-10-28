@@ -104,12 +104,12 @@ const themes = [
 
 <style>
   /* ---------- Intro ---------- */
-  .xintro { background: var(--white); text-align: center; padding-block: clamp(56px, 7vw, 96px); }
+  .xintro { background: var(--white); text-align: center; padding-block: var(--section-half); }
   .xemblem { display: block; width: 120px; height: auto; margin: 0 auto 28px; }
   .xintro p { max-width: 70ch; margin: 0 auto; color: var(--muted); line-height: 1.95; }
 
   /* ---------- Themes ---------- */
-  .xtheme { background: var(--white); padding-block: clamp(56px, 7vw, 100px); border-top: 1px solid var(--stone); }
+  .xtheme { background: var(--white); padding-block: var(--section-half); border-top: 1px solid var(--stone); }
   .xtheme--flip { background: #f4f4f4; border-top: 0; }
   .xtheme__grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(40px, 7vw, 120px); align-items: center; }
   .xtheme--flip .xtheme__text { order: 2; }
@@ -142,7 +142,7 @@ const themes = [
   }
 
   /* ---------- All stays include ---------- */
-  .xinc { background: var(--sand); padding-block: clamp(72px, 9vw, 120px); text-align: center; }
+  .xinc { background: var(--sand); padding-block: var(--section-half); text-align: center; }
   .xinc h2 { font-family: var(--font-ui); font-size: .8rem; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--ink); margin-bottom: clamp(36px, 5vw, 56px); }
   .xinc__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 36px 28px; }
   .xinc__list li { display: flex; flex-direction: column; align-items: center; gap: 6px; }
