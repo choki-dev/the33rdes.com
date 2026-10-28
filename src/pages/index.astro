@@ -432,8 +432,12 @@ const chapters = [
     margin: 28px 0 0; font-size: .74rem; letter-spacing: .34em; text-transform: uppercase; color: #e8e2d6;
     animation: rise 1.6s var(--ease-out) .7s both;
   }
-  /* Bottom padding clears the floating WhatsApp button, so it never sits on Check availability. */
-  .hero__bar { position: relative; z-index: 5; padding-bottom: 104px; animation: rise 1.4s var(--ease-out) 1s both; }
+  /* The bar ends short of the floating WhatsApp button (bottom-right: inset + 58px + gap), so the icon never sits on
+     Check availability. Wide screens already have that room beside the centred container. */
+  .hero__bar {
+    padding-right: max(var(--gutter), calc(clamp(16px, 2.4vw, 28px) + 58px + 16px - max(0px, (100vw - var(--container)) / 2)));
+  }
+  .hero__bar { position: relative; z-index: 5; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both; }
   .hero__sound {
     position: absolute; right: var(--gutter); top: calc(var(--header-h) + 24px);
     width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
@@ -447,9 +451,9 @@ const chapters = [
     .hero__tag span { display: block; }
     .hero__tag .hero__sep { display: none; }
   }
-  /* Phones: clear the bottom quick-action bar (60px) and the WhatsApp button floating above it. */
+  /* Phones: the bar is full width, so it sits just above the bottom quick-action bar (60px) plus the WhatsApp button. */
   @media (max-width: 600px) {
-    .hero__bar { padding-bottom: calc(60px + 16px + 52px + 16px + env(safe-area-inset-bottom)); }
+    .hero__bar { padding-right: var(--gutter); padding-bottom: calc(60px + 10px + 48px + 10px + env(safe-area-inset-bottom)); }
   }
 
   /* ---------- Intro band ---------- */
