@@ -192,13 +192,17 @@ import { img } from '../lib/images';
       card.querySelector<HTMLAnchorElement>('[data-book]')!.href = bookUrl(forRoom, slug);
 
       const message = [
-        'Hello, I would like to reserve at The 33rd Executive Suites.',
+        'Hello, I would like to make a reservation at The 33rd Executive Suites.',
+        '',
         `Room type: ${name}`,
         `Arrival: ${formatLong(stay.checkIn)}`,
         `Departure: ${formatLong(stay.checkOut)}`,
         `Nights: ${nights}`,
         `Rooms: ${needed}`,
-        `Guests: ${plural(stay.adults, 'adult')}, ${plural(stay.children, 'child', 'children')}`,
+        `Guests: ${plural(stay.adults, 'adult')}${stay.children ? `, ${plural(stay.children, 'child', 'children')}` : ''}`,
+        '',
+        `Could you please let me know if the ${needed > 1 ? 'rooms are' : 'room is'} available for these dates?`,
+        'Thank you.',
       ].join('\n');
       card.querySelector<HTMLAnchorElement>('[data-whatsapp]')!.href = `${wa}?text=${encodeURIComponent(message)}`;
     });
