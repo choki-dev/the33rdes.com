@@ -18,7 +18,12 @@ const href = `${site.whatsappHref}?text=${encodeURIComponent(message)}`;
 </div>
 
 <style>
-  .wa { position: fixed; right: clamp(16px, 2.4vw, 28px); bottom: clamp(16px, 2.4vw, 28px); z-index: 95; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+  .wa {
+    position: fixed; right: clamp(16px, 2.4vw, 28px); bottom: clamp(16px, 2.4vw, 28px); z-index: 95; display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+    transition: opacity .4s var(--ease), transform .4s var(--ease), visibility 0s;
+  }
+  /* Steps aside while a [data-wa-avoid] element (the hero booking bar) is on screen, so it never covers it. */
+  .wa--away { opacity: 0; visibility: hidden; transform: translateY(16px); pointer-events: none; transition: opacity .4s var(--ease), transform .4s var(--ease), visibility 0s .4s; }
 
   .wa__btn {
     position: relative; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%;
@@ -65,7 +70,22 @@ const href = `${site.whatsappHref}?text=${encodeURIComponent(message)}`;
 </style>
 
 <script>
-  // Show the greeting bubble once per visit, a few seconds after the page opens.
+  // Step aside while anything marked [data-wa-avoid] is in view.
+  const float = document.querySelector<HTMLElement>('[data-wa-float]');
+  const avoid = [...document.querySelectorAll<HTMLElement>('[data-wa-avoid]')];
+  const inView = new Set<Element>();
+  const onAway = new Set<() => void>();
+  const isAway = () => inView.size > 0;
+  if (float && avoid.length) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? inView.add(e.target) : inView.delete(e.target);
+      float.classList.toggle('wa--away', isAway());
+      if (!isAway()) onAway.forEach((fn) => fn());
+    });
+    avoid.forEach((el) => io.observe(el));
+  }
+
+  // Show the greeting bubble once per visit, a few seconds after the page opens (or once the float is back in view).
   const bubble = document.querySelector<HTMLElement>('[data-wa-bubble]');
   if (bubble) {
     const KEY = 'wa-bubble-dismissed';
@@ -76,6 +96,8 @@ const href = `${site.whatsappHref}?text=${encodeURIComponent(message)}`;
       try { sessionStorage.setItem(KEY, '1'); } catch {}
     };
     if (!dismissed) setTimeout(() => (bubble.hidden = false), 4000);
+    // While the float is hidden the bubble waits, then plays its entrance when the float returns.
+    onAway.add(() => bubble.hidden || bubble.getAnimations().forEach((a) => (a.cancel(), a.play())));
     bubble.querySelector('[data-wa-close]')?.addEventListener('click', dismiss);
     document.querySelector('[data-wa-float] .wa__btn')?.addEventListener('click', dismiss);
   }
