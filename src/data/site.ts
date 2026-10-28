@@ -235,7 +235,7 @@ export type Experience = {
   body: string[];
   location: string;
   hours: { label: string; value: string }[];
-  reserve: 'dining' | 'spa' | 'event' | 'none';
+  reserve: 'dining' | 'spa' | 'event' | 'fitness' | 'none';
   hero: string;
   images: string[];
 };
@@ -343,7 +343,7 @@ export const experiences: Experience[] = [
     body: [],
     location: '2nd Floor',
     hours: [{ label: 'Daily', value: '6:00 AM – 10:00 PM' }],
-    reserve: 'none',
+    reserve: 'fitness',
     hero: 'gym-4',
     images: ['gym-4', 'gym-5', 'gym-1', 'gym-2', 'gym-3'],
   },
