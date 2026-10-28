@@ -115,7 +115,7 @@ const chapters = [
       <p class="hero__tag"><span>A boutique luxury hotel</span><span class="hero__sep" aria-hidden="true">&nbsp;·&nbsp;</span><span>Thimphu, Bhutan</span></p>
     </div>
 
-    <div class="hero__bar container" data-wa-avoid>
+    <div class="hero__bar container">
       <BookingBar variant="hero" />
     </div>
 
@@ -432,7 +432,8 @@ const chapters = [
     margin: 28px 0 0; font-size: .74rem; letter-spacing: .34em; text-transform: uppercase; color: #e8e2d6;
     animation: rise 1.6s var(--ease-out) .7s both;
   }
-  .hero__bar { position: relative; z-index: 5; padding-bottom: 40px; animation: rise 1.4s var(--ease-out) 1s both; }
+  /* Bottom padding clears the floating WhatsApp button, so it never sits on Check availability. */
+  .hero__bar { position: relative; z-index: 5; padding-bottom: 104px; animation: rise 1.4s var(--ease-out) 1s both; }
   .hero__sound {
     position: absolute; right: var(--gutter); top: calc(var(--header-h) + 24px);
     width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
@@ -445,6 +446,9 @@ const chapters = [
     /* Two clean lines instead of a stray dot at a line end. */
     .hero__tag span { display: block; }
     .hero__tag .hero__sep { display: none; }
+  }
+  /* Phones hide the floating WhatsApp button (the bottom bar has one), so the booking bar can sit low again. */
+  @media (max-width: 600px) {
     .hero__bar { padding-bottom: 24px; }
   }
 
