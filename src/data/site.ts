@@ -18,7 +18,8 @@ export const site = {
   },
   // Map pin for search engines and AI answers (from the hotel's Google Maps listing).
   geo: { lat: 27.4368001, lng: 89.6546175 },
-  mapUrl: 'https://maps.app.goo.gl/jzqAUjQweg65MZNL8',
+  mapUrl: 'https://maps.app.goo.gl/rQMKaKK3ZH1KMMmD8',
+  directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=27.4368001,89.6546175',
   mapEmbed: 'https://www.google.com/maps?q=27.4368001,89.6546175&z=17&output=embed',
   phone: '+975 16993333',
   phoneHref: 'tel:+97516993333',
@@ -74,6 +75,7 @@ export const nav = [
   { label: 'Meeting & Events', href: '/experiences/the-boardroom', image: 'board-6' },
   { label: 'Travel Guide', href: '/travel-guide', image: 'guide-dochula' },
   { label: 'Gallery', href: '/gallery', image: 'gallery-2' },
+  { label: 'Location', href: '/location', image: 'valley-1' },
   { label: 'Get in Touch', href: '/contact', image: 'lobby-3' },
 ] as const;
 

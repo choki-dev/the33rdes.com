@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base title="Location" description={`Find The 33rd Executive Suites on ${site.address.full} — about 10 minutes from Thimphu town. Map, address and directions.`}>
+  <PageHero image={img('valley-1')} eyebrow="Location" title="Find <em>us</em>" subtitle="In Babesa, about 10 minutes from Thimphu town." short />
+
+  <section class="section loc">
+    <div class="container loc__grid">
+      <div class="loc__info reveal">
+        <span class="eyebrow">Our address</span>
+        <h2>{site.name}</h2>
+        <ul class="loc__list">
+          <li><Icon name="pin" /><div><span class="label">Address</span><span>{site.address.full}</span></div></li>
+          <li><Icon name="phone" /><div><span class="label">Call or WhatsApp</span><a href={site.phoneHref}>{site.phone}</a></div></li>
+          <li><Icon name="clock" /><div><span class="label">Check-in / out</span><span>{site.checkIn} / {site.checkOut}</span></div></li>
+        </ul>
+        <div class="loc__actions">
+          <a class="btn btn--block" href={site.directionsUrl} target="_blank" rel="noopener">Get directions</a>
+          <a class="btn btn--outline btn--block" href={site.mapUrl} target="_blank" rel="noopener">Open in Google Maps</a>
+        </div>
+      </div>
+      <div class="loc__map reveal reveal-delay-1">
+        <iframe src={site.mapEmbed} title={`Map showing ${site.name}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .loc__grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: clamp(32px, 5vw, 80px); align-items: stretch; }
+  .loc__info h2 { margin-bottom: 8px; }
+  .loc__list { list-style: none; padding: 0; margin: 24px 0 32px; display: grid; }
+  .loc__list li { display: flex; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--stone); }
+  .loc__list :global(svg) { color: var(--gold); flex: none; margin-top: 4px; }
+  .loc__list .label { display: block; margin-bottom: 4px; }
+  .loc__list a, .loc__list span:not(.label) { font-family: var(--font-display); font-size: var(--fs-detail); color: var(--ink); overflow-wrap: anywhere; }
+  .loc__list a:hover { color: var(--gold-deep); }
+  .loc__actions { display: grid; gap: 12px; }
+  .loc__map { min-height: 480px; background: var(--stone); }
+  .loc__map iframe { display: block; width: 100%; height: 100%; min-height: 480px; border: 0; }
+  @media (max-width: 900px) {
+    .loc__grid { grid-template-columns: 1fr; }
+    .loc__map, .loc__map iframe { min-height: 380px; }
+  }
+</style>

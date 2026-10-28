@@ -14,6 +14,7 @@ const paths = [
   '/about/',
   '/availability/',
   '/book/',
+  '/location/',
   '/contact/',
 ];
 

@@ -34,6 +34,7 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 - [Travel guide to Bhutan](${link('/travel-guide')})
 - [Our story](${link('/about')})
 - [Gallery](${link('/gallery')})
+- [Location & directions](${link('/location')})
 - [Contact](${link('/contact')})
 `;
   return new Response(text, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
