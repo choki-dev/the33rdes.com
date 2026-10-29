@@ -18,7 +18,7 @@ const roomData = await Promise.all(
     thumb: (await getImage({ src: img(r.hero), width: 720, height: 540, fit: 'cover', format: 'webp' })).src,
   })),
 );
-const config = { rooms: roomData, addons, policies, endpoint: site.formEndpoint };
+const config = { rooms: roomData, addons, policies, endpoint: site.formEndpoint, accessKey: site.formAccessKey };
 const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
 ---
 <Base title="Book Your Stay" noindex description="Book your stay at The 33rd Executive Suites, Thimphu — choose your dates and room, and request airport transfers, spa treatments and more." overlayHeader={false}>
@@ -284,6 +284,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
     addons: { id: string; name: string; description: string }[];
     policies: { maxRooms: number };
     endpoint: string;
+    accessKey: string;
   };
   const cfg: Config = JSON.parse(document.getElementById('booking-config')!.textContent!);
   const $ = <T extends HTMLElement = HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
@@ -484,16 +485,16 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
       const room = cfg.rooms.find((r) => r.slug === state.roomSlug)!;
       const extras = cfg.addons.filter((a) => state.addons.includes(a.id)).map((a) => a.name);
       const fullName = `${guest.firstName} ${guest.lastName}`.trim();
-      // Sent by FormSubmit as an email to the reservations address; replies go straight to the guest.
+      // Sent by Web3Forms as an email to the reservations address; replies go straight to the guest.
       const res = await fetch(cfg.endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json', accept: 'application/json' },
         body: JSON.stringify({
-          _subject: `New booking request ${ref} — ${room.name}, ${state.checkIn} → ${state.checkOut}`,
-          _template: 'table',
-          _captcha: 'false',
-          _honey: guest.website ?? '',
-          _replyto: guest.email,
+          access_key: cfg.accessKey,
+          subject: `New booking request ${ref} — ${room.name}, ${state.checkIn} → ${state.checkOut}`,
+          from_name: 'The 33rd Executive Suites website',
+          botcheck: Boolean(guest.website),
+          replyto: guest.email,
           Reference: ref,
           name: fullName,
           email: guest.email,

@@ -10,7 +10,7 @@ const { kind, venue = '', submitLabel = 'Send request' } = Astro.props;
 const showBookingFields = kind !== 'general';
 const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
 ---
-<form class="eform" data-enquiry data-endpoint={site.formEndpoint} novalidate>
+<form class="eform" data-enquiry data-endpoint={site.formEndpoint} data-access-key={site.formAccessKey} novalidate>
   <input type="hidden" name="kind" value={kind} />
   <input type="hidden" name="venue" value={venue} />
   <div class="hp" aria-hidden="true">
@@ -87,16 +87,16 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
       try {
         const { website, kind, venue, ...fields } = Object.fromEntries(new FormData(form)) as Record<string, string>;
         const titles: Record<string, string> = { general: 'Website enquiry', dining: 'Table reservation request', spa: 'Spa appointment request', event: 'Event enquiry' };
-        // Sent by FormSubmit as an email to the reservations address; replies go straight to the guest.
+        // Sent by Web3Forms as an email to the reservations address; replies go straight to the guest.
         const res = await fetch(form.dataset.endpoint!, {
           method: 'POST',
           headers: { 'content-type': 'application/json', accept: 'application/json' },
           body: JSON.stringify({
-            _subject: `${titles[kind] ?? 'Website enquiry'}${venue ? ` — ${venue}` : ''}`,
-            _template: 'table',
-            _captcha: 'false',
-            _honey: website ?? '',
-            _replyto: fields.email,
+            access_key: form.dataset.accessKey,
+            subject: `${titles[kind] ?? 'Website enquiry'}${venue ? ` — ${venue}` : ''}`,
+            from_name: 'The 33rd Executive Suites website',
+            botcheck: Boolean(website),
+            replyto: fields.email,
             ...(venue ? { Venue: venue } : {}),
             ...fields,
           }),

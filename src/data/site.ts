@@ -24,9 +24,10 @@ export const site = {
   phoneHref: 'tel:+97516993333',
   whatsappHref: 'https://wa.me/97516993333',
   email: 'reservation@the33rdes.com',
-  // Booking and enquiry forms post here (FormSubmit, no API key needed). The first submission sends
-  // an activation email to this address; click "Activate Form" in it once and requests start arriving.
-  formEndpoint: 'https://formsubmit.co/ajax/reservation@the33rdes.com',
+  // Booking and enquiry forms post here (Web3Forms). Every request is emailed to the address the access
+  // key was created for (reservation@the33rdes.com). The key is public by design, so it is safe here.
+  formEndpoint: 'https://api.web3forms.com/submit',
+  formAccessKey: '08d06667-2b05-48de-aed8-217a328858d3',
   social: {
     facebook: 'https://www.facebook.com/share/1Cpdm4A9DZ/',
     instagram: 'https://www.instagram.com/the33rdexecutivesuites',
