@@ -4,8 +4,11 @@ import { roomAmenities } from '../data/site';
 interface Props {
   /** Full-width layout (Rooms page): roomier tiles in a centred block. */
   wide?: boolean;
+  /** Leave out the mini kitchen tile (rooms without one). */
+  noKitchen?: boolean;
 }
-const { wide = false } = Astro.props;
+const { wide = false, noKitchen = false } = Astro.props;
+const items = noKitchen ? roomAmenities.filter((a) => a !== 'Mini kitchen & microwave') : roomAmenities;
 
 // Line icons for the amenity tiles (24px grid, drawn with the current colour); unknown items get a tick.
 const amenityIcons: Record<string, string> = {
@@ -28,7 +31,7 @@ const amenityIcons: Record<string, string> = {
 const tick = '<path d="M5 12.5 10 17 19 7"/>';
 ---
 <ul class:list={['amen', { 'amen--wide': wide }]}>
-  {roomAmenities.map((a, i) => (
+  {items.map((a, i) => (
     <li class:list={['reveal', `reveal-delay-${i % 3}`]}>
       <span class="amen__icon">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" set:html={amenityIcons[a] ?? tick} />

@@ -15,7 +15,7 @@ export function getStaticPaths() {
 
 const { room } = Astro.props;
 const others = rooms.filter((r) => r.slug !== room.slug);
-const perks = ['Daily vegetarian breakfast', 'High-speed Wi-Fi & kitchenette', 'Fitness centre access', 'Personal, attentive service'];
+const perks = ['Daily vegetarian breakfast', room.noKitchen ? 'High-speed Wi-Fi' : 'High-speed Wi-Fi & kitchenette', 'Fitness centre access', 'Personal, attentive service'];
 ---
 <Base title={room.name} description={`${room.name} in Babesa, Thimphu: ${room.size}, ${room.bed} bed, ${room.view.toLowerCase()}, for up to ${room.capacity} guests. ${room.description}`} image={img(room.hero)} imageAlt={`${room.name} at ${site.name}, Thimphu`}>
   <PageHero image={img(room.hero)} eyebrow={`Rooms & Suites · ${room.view}`} title={room.name} subtitle={room.tagline} />
@@ -39,7 +39,7 @@ const perks = ['Daily vegetarian breakfast', 'High-speed Wi-Fi & kitchenette', '
             <span class="eyebrow">In every room</span>
             <h3>Room amenities</h3>
           </div>
-          <AmenityTiles />
+          <AmenityTiles noKitchen={room.noKitchen} />
         </div>
       </div>
 

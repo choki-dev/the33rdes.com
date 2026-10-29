@@ -92,6 +92,8 @@ export type Room = {
   highlight?: string;
   /** The signature room, given pride of place on the home page. */
   featured?: boolean;
+  /** Rooms without the mini kitchen: their page leaves out the kitchenette. */
+  noKitchen?: boolean;
   size: string;
   bed: string;
   capacity: number;
@@ -153,6 +155,7 @@ export const rooms: Room[] = [
     name: 'Deluxe Premium',
     short: 'Deluxe Premium',
     description: deluxeDescription('Deluxe Premium'),
+    noKitchen: true,
     size: '30 m²',
     bed: 'King or Twin',
     capacity: 2,
@@ -165,6 +168,7 @@ export const rooms: Room[] = [
     name: 'Deluxe Standard',
     short: 'Deluxe Standard',
     description: deluxeDescription('Deluxe Standard'),
+    noKitchen: true,
     size: '30 m²',
     bed: 'King or Twin',
     capacity: 2,
