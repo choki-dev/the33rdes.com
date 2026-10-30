@@ -7,7 +7,7 @@ const steppers = [
   { key: 'rooms', label: 'Rooms', hint: 'Up to 5 online', min: 1, max: 5 },
 ];
 ---
-<form class:list={['bbar', `bbar--${variant}`]} action="/availability" method="get" autocomplete="off" data-booking-bar>
+<form class:list={['bbar', `bbar--${variant}`]} action="/book" method="get" autocomplete="off" data-booking-bar>
   <div class="bbar__field bbar__dates" data-open="dates" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Choose dates">
     <div class="bbar__date">
       <span class="label">Arrival</span>
@@ -24,7 +24,7 @@ const steppers = [
     <div class="bbar__value bbar__value--text" data-guests-summary>2 Adults · 1 Room</div>
   </div>
 
-  <button class="btn bbar__submit" type="submit">Check availability</button>
+  <button class="btn btn--book bbar__submit" type="submit">Make an Inquiry</button>
 
   <input type="hidden" name="checkin" />
   <input type="hidden" name="checkout" />
@@ -67,6 +67,7 @@ const steppers = [
   .bbar__value em { font-style: normal; font-family: var(--font-ui); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; }
   .bbar__value small { font-size: .78rem; color: var(--muted); }
   .bbar__value--text { font-family: var(--font-display); font-size: 1.45rem; min-height: 2.6rem; }
+  .bbar__field { min-width: 0; }
   .bbar__submit { min-height: auto; height: auto; padding: 0 40px; border-radius: 0; }
 
   .bbar__pop { position: absolute; top: calc(100% + 10px); z-index: 30; }
@@ -97,7 +98,7 @@ const steppers = [
 
 <script>
   import { createRangePicker, formatParts } from '../lib/datepicker';
-  import { availabilityUrl, readStayParams } from '../lib/stay-params';
+  import { bookUrl, readStayParams } from '../lib/stay-params';
 
   document.querySelectorAll<HTMLFormElement>('[data-booking-bar]').forEach((form) => {
     const input = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
@@ -187,9 +188,9 @@ const steppers = [
         toggle('dates');
         return;
       }
-      // Opens the room list for these dates, e.g. /availability/?dates=22/10/2026 to 24/10/2026&adults=2…
+      // Opens the Book Now form with these dates and guests filled in, e.g. /book?checkin=2026-10-22&checkout=…
       e.preventDefault();
-      location.href = availabilityUrl({
+      location.href = bookUrl({
         checkIn: input('checkin').value,
         checkOut: input('checkout').value,
         adults: Number(input('adults').value),

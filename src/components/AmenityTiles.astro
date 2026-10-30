@@ -6,14 +6,20 @@ interface Props {
   wide?: boolean;
   /** Leave out the mini kitchen tile (rooms without one). */
   noKitchen?: boolean;
+  /** Add the bathtub tile (only a few rooms have one). */
+  bathtub?: boolean;
 }
-const { wide = false, noKitchen = false } = Astro.props;
-const items = noKitchen ? roomAmenities.filter((a) => a !== 'Mini kitchen & microwave') : roomAmenities;
+const { wide = false, noKitchen = false, bathtub = false } = Astro.props;
+const items = [
+  ...(noKitchen ? roomAmenities.filter((a) => a !== 'Mini kitchen & microwave') : roomAmenities),
+  ...(bathtub ? ['Bathtub'] : []),
+];
 
 // Line icons for the amenity tiles (24px grid, drawn with the current colour); unknown items get a tick.
 const amenityIcons: Record<string, string> = {
   'Mini kitchen & microwave': '<rect x="3" y="6" width="18" height="12" rx="1"/><rect x="5.5" y="8.5" width="9" height="7"/><path d="M17.5 9.5v.01M17.5 12v.01M17.5 14.5v.01"/>',
-  'Bathtub & rain shower': '<path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5v-2Z"/><path d="M6 12V6a2 2 0 0 1 4 0"/><path d="M7 19l-1 2M17 19l1 2"/>',
+  'Rain shower': '<path d="M5 9a7 7 0 0 1 14 0Z"/><path d="M12 2v0M8 13l-1 3M12 13v3M16 13l1 3M9.5 18.5l-.5 2M14.5 18.5l.5 2"/>',
+  Bathtub: '<path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5v-2Z"/><path d="M6 12V6a2 2 0 0 1 4 0"/><path d="M7 19l-1 2M17 19l1 2"/>',
   'Air conditioning': '<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5"/>',
   'Smart TV with satellite channels': '<rect x="3" y="5" width="18" height="12" rx="1"/><path d="M8 21h8M12 17v4"/>',
   'High-speed in-room Wi-Fi': '<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r=".9"/>',

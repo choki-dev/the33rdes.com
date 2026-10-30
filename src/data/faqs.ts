@@ -20,7 +20,7 @@ export const faqs = [
   },
   {
     q: 'What is included in every room?',
-    a: 'Every room has a mini kitchen and microwave, a bathtub and rain shower, high-speed Wi-Fi, a smart TV, a minibar, tea and coffee facilities and 24-hour room service. Daily vegetarian breakfast and fitness centre access are included in your stay.',
+    a: 'Rooms have a rain shower, high-speed Wi-Fi, a smart TV, a minibar, tea and coffee facilities and 24-hour room service, and most have a mini kitchen and microwave. The Valley and Executive Suites also have a bathtub. Every room can be booked with or without our daily vegetarian breakfast, and fitness centre access is included in your stay.',
   },
   {
     q: 'How do I book and see the rates?',

@@ -1,0 +1,33 @@
+---
+import { guestGuidelines } from '../data/site';
+---
+<section class="section section--sand guide" aria-labelledby="guide-title">
+  <div class="container container--narrow">
+    <header class="guide__head reveal">
+      <span class="eyebrow eyebrow--center">Before you arrive</span>
+      <h2 id="guide-title">Guest <em>guidelines</em></h2>
+      <p>Please review the following guidelines to ensure a safe and enjoyable stay.</p>
+    </header>
+    <div class="guide__list">
+      {guestGuidelines.map((g) => (
+        <div class="guide__item reveal">
+          <h3>{g.title}</h3>
+          <ul>{g.items.map((it) => <li set:html={it} />)}</ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .guide__head { text-align: center; margin-bottom: clamp(28px, 4vw, 44px); }
+  .guide__head p { color: var(--muted); margin: 0; }
+  .guide__list { display: grid; gap: 0; border-top: 1px solid var(--stone); }
+  .guide__item { padding: 28px 0; border-bottom: 1px solid var(--stone); }
+  .guide__item h3 { font-size: var(--fs-card); margin-bottom: 12px; }
+  .guide__item ul { margin: 0; padding-left: 1.1em; color: var(--charcoal); }
+  .guide__item li { margin-bottom: 8px; }
+  .guide__item li:last-child { margin-bottom: 0; }
+  .guide__item li::marker { color: var(--gold); }
+  .guide__item :global(strong) { font-weight: 500; color: var(--ink); }
+</style>

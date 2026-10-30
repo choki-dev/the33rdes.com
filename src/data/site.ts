@@ -75,6 +75,7 @@ export const nav = [
   { label: 'Meeting & Events', href: '/experiences/the-boardroom', image: 'board-6' },
   { label: 'Travel Guide', href: '/travel-guide', image: 'guide-dochula' },
   { label: 'Gallery', href: '/gallery', image: 'gallery-2' },
+  { label: 'Location', href: '/contact#map', image: 'valley-1' },
   { label: 'Get in Touch', href: '/contact', image: 'lobby-3' },
 ] as const;
 
@@ -82,6 +83,30 @@ export const policies = {
   maxNights: 30,
   maxRooms: 5,
 };
+
+// Every room can be booked either way; the guest picks one in step 2 of the booking page.
+export const mealPlans = [
+  { id: 'breakfast', label: 'With breakfast', note: 'Daily vegetarian breakfast buffet included' },
+  { id: 'room-only', label: 'Without breakfast', note: 'Room only' },
+] as const;
+
+export const guestGuidelines = [
+  {
+    title: 'Early arrival / late departure',
+    items: [
+      `<strong>Early arrival:</strong> check-in is at ${site.checkIn}. Early arrivals can store luggage and use our facilities until the room is ready. Early check-in is subject to availability and may incur an extra fee.`,
+      `<strong>Late departure:</strong> check-out is at ${site.checkOut}. Late check-out requests are subject to availability and additional charges. For a guaranteed late check-out, please contact reception in advance.`,
+    ],
+  },
+  {
+    title: 'Cancellation policy',
+    items: [
+      'Cancellations made less than 45 days before the scheduled arrival date will be subject to a 50% cancellation fee.',
+      'Cancellations made 30 days or less before the scheduled arrival date, as well as no-shows, will be charged the full amount of the reservation.',
+      'Group bookings (more than 5 rooms) have different cancellation policies; please contact reservations for the details.',
+    ],
+  },
+];
 
 export type Room = {
   slug: string;
@@ -94,6 +119,8 @@ export type Room = {
   featured?: boolean;
   /** Rooms without the mini kitchen: their page leaves out the kitchenette. */
   noKitchen?: boolean;
+  /** Only a few rooms have a bathtub; the rest have a rain shower. */
+  bathtub?: boolean;
   size: string;
   bed: string;
   capacity: number;
@@ -114,13 +141,14 @@ export const rooms: Room[] = [
     short: 'Valley',
     tagline: 'Our most exclusive accommodation.',
     description:
-      'The Valley Suite is our most exclusive accommodation, offering a stunning panoramic view of the nunnery across the mountains. Thoughtfully designed for two guests, it blends comfort with sophistication, featuring modern interiors and premium amenities — perfect for travellers who seek both tranquillity and breathtaking scenery.',
-    highlight: 'Signature suite · Nunnery view',
+      'The Valley Suite is our most exclusive accommodation, offering a stunning panoramic view of the monastery across the mountains. Thoughtfully designed for two guests, it blends comfort with sophistication, featuring modern interiors and premium amenities — perfect for travellers who seek both tranquillity and breathtaking scenery.',
+    highlight: 'Signature suite · Monastery view',
     featured: true,
+    bathtub: true,
     size: '30 m²',
     bed: 'King or Twin',
     capacity: 2,
-    view: 'Valley & nunnery view',
+    view: 'Valley & Monastery view',
     hero: 'valley-suite-1',
     images: ['valley-suite-1', 'valley-suite-2', 'valley-suite-3', 'valley-1'],
   },
@@ -131,6 +159,7 @@ export const rooms: Room[] = [
     tagline: 'Crafted for elegance and relaxation.',
     description:
       'Crafted for elegance and relaxation, the Executive Suite offers a spacious, modern setting with refined interiors and premium amenities. Its luxurious bathtub invites you to unwind in complete comfort — the perfect retreat for those seeking style and tranquillity in the heart of Thimphu.',
+    bathtub: true,
     size: '30 m²',
     bed: 'King or Twin',
     capacity: 2,
@@ -180,7 +209,7 @@ export const rooms: Room[] = [
 
 export const roomAmenities = [
   'Mini kitchen & microwave',
-  'Bathtub & rain shower',
+  'Rain shower',
   'Air conditioning',
   'Smart TV with satellite channels',
   'High-speed in-room Wi-Fi',
@@ -250,7 +279,7 @@ export const experiences: Experience[] = [
     slug: 'artisans-table',
     name: 'Artisan’s Table',
     kind: 'Signature Restaurant',
-    tagline: 'Pure vegetarian, beautifully made.',
+    tagline: 'Where pure ingredients meet culinary artistry.',
     intro:
       'Artisan’s Table offers a thoughtfully curated vegetarian dining experience, celebrating fresh ingredients, creative flavours, and the art of wholesome cooking. Every dish is prepared with care, bringing together seasonal produce and culinary craftsmanship to create delicious, nourishing meals for every guest.',
     body: [],
@@ -311,7 +340,7 @@ export const experiences: Experience[] = [
     slug: 'om-spa',
     name: 'Om Spa',
     kind: 'Spa & Wellness',
-    tagline: 'Rejuvenate body and mind.',
+    tagline: 'A sanctuary for the senses, a haven for the soul.',
     intro:
       'A sanctuary designed to rejuvenate both body and mind, with personalised treatments, steam and sauna.',
     body: [
@@ -355,7 +384,7 @@ export const experiences: Experience[] = [
 ];
 
 export const stayIncludes = [
-  { title: 'Daily breakfast', text: 'Vegetarian breakfast buffet at Artisan’s Table' },
+  { title: 'Breakfast your way', text: 'Every room with or without the vegetarian breakfast buffet' },
   { title: 'Fitness centre', text: 'Modern cardio & strength equipment' },
   { title: 'High-speed Wi-Fi', text: 'Throughout the hotel and in every room' },
   { title: 'Kitchenette', text: 'Mini kitchen, fridge & microwave in every room' },

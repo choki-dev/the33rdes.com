@@ -2,7 +2,8 @@
 import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { addons, policies, rooms, site } from '../data/site';
+import GuestGuidelines from '../components/GuestGuidelines.astro';
+import { addons, mealPlans, policies, rooms, site } from '../data/site';
 import { img } from '../lib/images';
 
 const roomData = await Promise.all(
@@ -18,7 +19,7 @@ const roomData = await Promise.all(
     thumb: (await getImage({ src: img(r.hero), width: 720, height: 540, fit: 'cover', format: 'webp' })).src,
   })),
 );
-const config = { rooms: roomData, addons, policies, endpoint: site.formEndpoint, accessKey: site.formAccessKey };
+const config = { rooms: roomData, addons, mealPlans, policies, endpoint: site.formEndpoint, accessKey: site.formAccessKey };
 const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
 ---
 <Base title="Book Your Stay" noindex description="Book your stay at The 33rd Executive Suites, Thimphu — choose your dates and room, and request airport transfers, spa treatments and more." overlayHeader={false}>
@@ -127,7 +128,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
               <div class="field span-2"><label for="g-req">Special requests</label><textarea class="textarea" id="g-req" name="requests" placeholder="Dietary needs, bed preference, celebrations, accessibility…"></textarea></div>
               <label class="span-2 terms">
                 <input type="checkbox" name="acceptTerms" required />
-                <span>I understand that this is a reservation request. No payment is taken online — the hotel will confirm availability and send the rate and payment details by email.</span>
+                <span>I understand that this is a reservation request. No payment is taken online — the hotel will confirm availability and send the rate and payment details by email. I have read the <a href="#guide-title">cancellation policy</a>.</span>
               </label>
               <div class="span-2 panel__actions">
                 <button class="btn" type="submit" data-submit>Request reservation</button>
@@ -160,6 +161,8 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
       </div>
     </div>
   </section>
+
+  <GuestGuidelines />
 
   <script is:inline type="application/json" id="booking-config" set:html={JSON.stringify(config)} />
 </Base>
@@ -200,6 +203,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   .stay__dates strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; color: var(--ink); margin-top: 4px; }
   .stay__guests { display: grid; gap: 16px; }
   @media (max-width: 640px) { .stay__side { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .ropt__plans { grid-template-columns: 1fr; } }
 
   .roomlist { display: grid; gap: 24px; margin-top: 16px; }
   .addons { display: grid; gap: 14px; margin-top: 20px; }
@@ -213,6 +217,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   .chips input:checked + span { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
   .chips input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
   .terms { display: flex; gap: 14px; align-items: flex-start; font-size: .9rem; color: var(--muted); cursor: pointer; }
+  .terms a { color: var(--gold-deep); border-bottom: 1px solid var(--gold-soft); }
   .terms input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--gold-deep); flex: none; }
 
   .confirm { text-align: center; padding-block: clamp(48px, 7vw, 88px); }
@@ -247,8 +252,16 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   .ropt__desc { font-size: var(--fs-small); color: var(--muted); margin: 0 0 18px; }
   .ropt__foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: 1px solid var(--stone); }
   .ropt__note { font-size: var(--fs-small); color: var(--muted); }
-  .ropt__foot .btn { min-height: 44px; padding: 0 22px; }
-  .ropt__foot .btn.is-selected { --btn-bg: var(--ink); --btn-bd: var(--ink); }
+  .ropt__plans { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ropt__plan {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 16px; text-align: left; cursor: pointer;
+    font: inherit; background: var(--white); color: var(--ink); border: 1px solid var(--stone); transition: border-color .3s, background .3s, color .3s;
+  }
+  .ropt__plan strong { font-family: var(--font-ui); font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+  .ropt__plan small { font-size: .76rem; color: var(--muted); line-height: 1.4; }
+  .ropt__plan:hover { border-color: var(--gold); }
+  .ropt__plan.is-selected { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .ropt__plan.is-selected small { color: var(--gold-wash); }
   .ropt__warn { font-size: var(--fs-small); color: #a4473a; margin: 0; }
   @media (max-width: 760px) {
     .ropt { grid-template-columns: 1fr; }
@@ -282,6 +295,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   type Config = {
     rooms: { slug: string; name: string; tagline: string; size: string; bed: string; capacity: number; view: string; highlight: string; thumb: string }[];
     addons: { id: string; name: string; description: string }[];
+    mealPlans: { id: string; label: string; note: string }[];
     policies: { maxRooms: number };
     endpoint: string;
     accessKey: string;
@@ -300,7 +314,8 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   const validDate = (v: string | null) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) && v >= today() ? v : '');
   type Count = 'adults' | 'children' | 'rooms';
   const fromUrl = { adults: int(params.get('adults')), children: int(params.get('children')), rooms: int(params.get('rooms')) };
-  const state: StayInput & { step: number; preferred: string | null } = {
+  const planFor = (id: string | null) => cfg.mealPlans.find((m) => m.id === id);
+  const state: StayInput & { step: number; preferred: string | null; mealPlan: string } = {
     checkIn: validDate(params.get('checkin')),
     checkOut: validDate(params.get('checkout')),
     adults: Math.max(1, fromUrl.adults ?? 1),
@@ -310,6 +325,8 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
     addons: [],
     step: 1,
     preferred: params.get('room'),
+    // Breakfast or room only, picked with the room in step 2 (a room page link can suggest one).
+    mealPlan: planFor(params.get('plan'))?.id ?? '',
   };
   // Which guest counts the guest has actually chosen (unchosen ones show as "—").
   const chosen: Record<Count, boolean> = { adults: fromUrl.adults !== null, children: fromUrl.children !== null, rooms: fromUrl.rooms !== null };
@@ -339,7 +356,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
       if (err) return showError(err);
     }
     if (step >= 3) {
-      if (!state.roomSlug) return showError('Please choose a room.');
+      if (!state.roomSlug || !state.mealPlan) return showError('Please choose a room, with or without breakfast.');
       const err = validateStay(state);
       if (err) return showError(err);
     }
@@ -411,8 +428,16 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
             <p class="ropt__meta"><span>${esc(r.size)}</span><span>${esc(r.bed)}</span><span>Sleeps ${r.capacity}</span><span>${esc(r.view)}</span></p>
             ${r.tagline ? `<p class="ropt__desc">${esc(r.tagline)}</p>` : ''}
             <div class="ropt__foot">
-              ${fits ? '<span class="ropt__note">Breakfast included</span>' : `<p class="ropt__warn">Sleeps ${r.capacity} adults per room — add rooms in step 1 for ${state.adults} adults.</p>`}
-              <button type="button" class="btn ${selected ? 'is-selected' : ''}" data-pick="${r.slug}" ${fits ? '' : 'disabled'}>${selected ? 'Selected' : 'Select'}</button>
+              ${
+                fits
+                  ? `<div class="ropt__plans">${cfg.mealPlans
+                      .map((m) => {
+                        const on = selected && state.mealPlan === m.id;
+                        return `<button type="button" class="ropt__plan ${on ? 'is-selected' : ''}" data-pick="${r.slug}" data-plan="${m.id}" aria-pressed="${on}"><strong>${esc(m.label)}</strong><small>${esc(m.note)}</small></button>`;
+                      })
+                      .join('')}</div>`
+                  : `<p class="ropt__warn">Sleeps ${r.capacity} adults per room — add rooms in step 1 for ${state.adults} adults.</p>`
+              }
             </div>
           </div>
         </article>`;
@@ -423,6 +448,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pick]');
     if (!btn) return;
     state.roomSlug = btn.dataset.pick!;
+    state.mealPlan = btn.dataset.plan!;
     go(3);
   });
 
@@ -458,7 +484,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
     </div>
     <p class="sum__line"><span>${nights > 0 ? `${nights} night${nights > 1 ? 's' : ''}` : 'Select dates'}</span><span>${parts.length ? parts.join(' · ') : 'Select guests'}</span></p>`;
     html += room
-      ? `<div class="sum__room"><strong>${esc(room.name)}</strong><small>Breakfast included</small></div>`
+      ? `<div class="sum__room"><strong>${esc(room.name)}</strong><small>${esc(planFor(state.mealPlan)?.label ?? '')}</small></div>`
       : `<p class="sum__empty">Choose a room to continue.</p>`;
     if (extras.length) html += `<ul class="sum__extras">${extras.map((a) => `<li>${esc(a.name)}</li>`).join('')}</ul>`;
     html += `<p class="sum__note">No payment is taken online. We confirm availability and email you our best rate. Bhutan’s Sustainable Development Fee (SDF), where applicable, is charged separately.</p>`;
@@ -504,6 +530,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
           Departure: formatLong(state.checkOut),
           Nights: String(nightsBetween(state.checkIn, state.checkOut)),
           Room: `${room.name} × ${state.rooms}`,
+          'Meal plan': planFor(state.mealPlan)?.label ?? '—',
           Guests: `${state.adults} adult${state.adults > 1 ? 's' : ''}, ${state.children} child${state.children === 1 ? '' : 'ren'}`,
           Extras: extras.length ? extras.join(', ') : '—',
           'Estimated arrival time': guest.arrivalTime || '—',

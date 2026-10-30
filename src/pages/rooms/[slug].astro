@@ -6,7 +6,8 @@ import Lightbox from '../../components/Lightbox.astro';
 import Filmstrip from '../../components/Filmstrip.astro';
 import Icon from '../../components/Icon.astro';
 import AmenityTiles from '../../components/AmenityTiles.astro';
-import { rooms, site } from '../../data/site';
+import GuestGuidelines from '../../components/GuestGuidelines.astro';
+import { mealPlans, rooms, site } from '../../data/site';
 import { img } from '../../lib/images';
 
 export function getStaticPaths() {
@@ -15,7 +16,7 @@ export function getStaticPaths() {
 
 const { room } = Astro.props;
 const others = rooms.filter((r) => r.slug !== room.slug);
-const perks = ['Daily vegetarian breakfast', room.noKitchen ? 'High-speed Wi-Fi' : 'High-speed Wi-Fi & kitchenette', 'Fitness centre access', 'Personal, attentive service'];
+const perks = ['With or without daily vegetarian breakfast', room.noKitchen ? 'High-speed Wi-Fi' : 'High-speed Wi-Fi & kitchenette', 'Fitness centre access', 'Personal, attentive service'];
 ---
 <Base title={room.name} description={`${room.name} in Babesa, Thimphu: ${room.size}, ${room.bed} bed, ${room.view.toLowerCase()}, for up to ${room.capacity} guests. ${room.description}`} image={img(room.hero)} imageAlt={`${room.name} at ${site.name}, Thimphu`}>
   <PageHero image={img(room.hero)} eyebrow={`Rooms & Suites · ${room.view}`} title={room.name} subtitle={room.tagline} />
@@ -36,10 +37,10 @@ const perks = ['Daily vegetarian breakfast', room.noKitchen ? 'High-speed Wi-Fi'
 
         <div class="amen-wrap">
           <div class="amen-head">
-            <span class="eyebrow">In every room</span>
+            <span class="eyebrow">In this room</span>
             <h3>Room amenities</h3>
           </div>
-          <AmenityTiles noKitchen={room.noKitchen} />
+          <AmenityTiles noKitchen={room.noKitchen} bathtub={room.bathtub} />
         </div>
       </div>
 
@@ -50,13 +51,15 @@ const perks = ['Daily vegetarian breakfast', room.noKitchen ? 'High-speed Wi-Fi'
           <ul>
             {perks.map((p) => <li><Icon name="check" size={16} /><span>{p}</span></li>)}
           </ul>
-          <a class="btn btn--block" href={`/book?room=${room.slug}`}>Check availability</a>
+          {mealPlans.map((m) => <a class="btn btn--book btn--block" href={`/book?room=${room.slug}&plan=${m.id}`}>Book {m.label.toLowerCase()}</a>)}
           <a class="btn btn--outline btn--block" href={site.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> Ask on WhatsApp</a>
           <p class="bookcard__note">Check-in {site.checkIn} · Check-out {site.checkOut}<br />We reply with availability and our best rate.</p>
         </div>
       </aside>
     </div>
   </section>
+
+  <GuestGuidelines />
 
   <Filmstrip images={room.images} caption={room.name} title={`Inside the <em>${room.short}</em>`} />
 

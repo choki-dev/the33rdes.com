@@ -35,7 +35,10 @@
   --radius: 2px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --header-h: 88px;
+  /* Header: top row (language, logo, Book now) + the menu line under it. */
+  --header-row: 112px;
+  --nav-h: 46px;
+  --header-h: calc(var(--header-row) + var(--nav-h));
   /* Fixed chrome at the bottom of the screen, shared so nothing else is laid out under it:
      the phone quick-action bar (MobileBookBar) and the floating WhatsApp button (WhatsAppFloat). */
   --mbar-h: 0px;
@@ -48,7 +51,7 @@
   color-scheme: light;
 }
 @media (max-width: 600px) {
-  :root { --mbar-h: 60px; --wa-size: 48px; --wa-inset: 16px; --wa-bottom: calc(var(--mbar-h) + 10px + env(safe-area-inset-bottom)); }
+  :root { --header-row: 80px; --nav-h: 42px; --mbar-h: 60px; --wa-size: 48px; --wa-inset: 16px; --wa-bottom: calc(var(--mbar-h) + 10px + env(safe-area-inset-bottom)); }
 }
 
 *,
@@ -86,9 +89,9 @@ a { color: inherit; text-decoration: none; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.15;
-  color: var(--ink);
+  color: #121110;
   margin: 0 0 0.5em;
   letter-spacing: 0.01em;
   text-wrap: balance;
@@ -170,6 +173,10 @@ p { margin: 0 0 1.25em; text-wrap: pretty; }
 .btn--dark { --btn-bg: var(--ink); --btn-bd: var(--ink); }
 .btn--dark::before { background: var(--gold); }
 .btn--dark:hover { border-color: var(--gold); }
+/* Book now: theme gold, turning white on hover. */
+.btn--book { --btn-bg: var(--gold); --btn-fg: var(--white); --btn-bd: var(--gold); }
+.btn--book::before { background: var(--white); }
+.btn--book:hover { color: var(--gold-deep); border-color: var(--gold); }
 .btn--block { width: 100%; }
 .btn[disabled] { opacity: .5; pointer-events: none; }
 
@@ -338,3 +345,9 @@ p { margin: 0 0 1.25em; text-wrap: pretty; }
   .reveal { opacity: 1; transform: none; transition: none; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ---------- Google Translate (language menu in the header) ----------
+   Hide Google's own toolbar, tooltip and hover highlight; the header menu replaces them. */
+body { top: 0 !important; }
+.skiptranslate > iframe, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
