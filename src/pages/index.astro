@@ -254,7 +254,7 @@ const chapters = [
                 <p>{c.text[0]}</p>
                 <p class="lux__meta">{c.meta}</p>
                 <div class="lux__links">
-                  {c.links.map((l) => <a class="link-arrow" href={l.href}>{l.label}</a>)}
+                  {c.links.map((l) => <a class="link-arrow" href={l.href}>{l.label}{l.label === 'Read more' && <span class="sr-only"> about {c.title}</span>}</a>)}
                 </div>
               </div>
             </div>
@@ -306,7 +306,7 @@ const chapters = [
         </a>
       ))}
     </div>
-    <div class="center"><a class="link-arrow" href="/experiences/sugar-box-cafe">Read more</a></div>
+    <div class="center"><a class="link-arrow" href="/experiences/sugar-box-cafe">Read more<span class="sr-only"> about Sugar Box Café</span></a></div>
   </section>
 
   <!-- ============ STAYS INCLUDE ============ -->
@@ -390,7 +390,7 @@ const chapters = [
           <h2 id="story-title">Our Story</h2>
           <p class="story__quote">“A place to rest — and a place to <em>reconnect</em> with yourself, your values and your journey.”</p>
           <p>With attentive, personalised service and a standard of care that meets international expectations, The 33rd is where comfort, integrity and quiet elegance come together — adorned with original artwork and rooted in sustainability.</p>
-          <a class="band__link" href="/about">Read more</a>
+          <a class="band__link" href="/about">Read more<span class="sr-only"> about our story</span></a>
         </div>
 
         <div class="story__tile reveal reveal-delay-2">
@@ -565,12 +565,12 @@ const chapters = [
     padding: 26px 0; background: none; border: 0; cursor: pointer; text-align: left; color: inherit;
   }
   .lux__name {
-    font-family: var(--font-display); font-size: clamp(1.35rem, 2.1vw, 1.85rem); line-height: 1.1; color: #a39d91;
+    font-family: var(--font-display); font-size: clamp(1.35rem, 2.1vw, 1.85rem); line-height: 1.1; color: #77726a;
     transition: color .5s var(--ease), transform .6s var(--ease);
   }
   .lux__name small {
     display: block; margin-top: 6px; font-family: var(--font-ui); font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
-    color: #a39d91; transition: color .4s;
+    color: #77726a; transition: color .4s;
   }
   .lux__plus { position: relative; width: 18px; height: 18px; }
   .lux__plus::before, .lux__plus::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--gold); transition: transform .5s var(--ease); }

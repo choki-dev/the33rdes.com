@@ -8,7 +8,7 @@ const steppers = [
 ];
 ---
 <form class:list={['bbar', `bbar--${variant}`]} action="/book" method="get" autocomplete="off" data-booking-bar>
-  <div class="bbar__field bbar__dates" data-open="dates" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Choose dates">
+  <div class="bbar__field bbar__dates" data-open="dates" tabindex="0" role="button" aria-haspopup="dialog">
     <div class="bbar__date">
       <span class="label">Arrival</span>
       <div class="bbar__value"><strong data-ci-day>—</strong><span><em data-ci-month>Select</em><small data-ci-week></small></span></div>
@@ -19,7 +19,7 @@ const steppers = [
     </div>
   </div>
 
-  <div class="bbar__field bbar__guests" data-open="guests" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Choose guests and rooms">
+  <div class="bbar__field bbar__guests" data-open="guests" tabindex="0" role="button" aria-haspopup="dialog">
     <span class="label">Guests &amp; Rooms</span>
     <div class="bbar__value bbar__value--text" data-guests-summary>2 Adults · 1 Room</div>
   </div>

@@ -24,7 +24,7 @@ const large = await Promise.all(images.map((key) => getImage({ src: img(key), wi
   <div class="fs__strip" data-xg-strip>
     {images.map((key, i) => (
       <a href={large[i].src} data-lightbox data-caption={caption} class:list={['fs__item', { 'fs__item--low': i % 2 === 1 }]}>
-        <Image src={img(key)} alt={`${caption} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(max-width: 700px) 70vw, 40vw" />
+        <Image src={img(key)} alt={`${caption} — photo ${i + 1}`} widths={[320, 480, 700, 1000]} sizes="(max-width: 700px) 70vw, 40vw" />
         <span class="fs__num">{String(i + 1).padStart(2, '0')}</span>
       </a>
     ))}

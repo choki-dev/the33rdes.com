@@ -7,6 +7,14 @@ export const faqs = [
     a: `We are on ${site.address.full}, in Babesa on the southern side of Thimphu, Bhutan’s capital — on the road in from Paro International Airport.`,
   },
   {
+    q: 'Is breakfast included?',
+    a: 'Every room can be booked with or without breakfast. With breakfast, guests enjoy the daily vegetarian breakfast buffet at Artisan’s Table; without breakfast, the rate is for the room only. You choose when you send your booking request.',
+  },
+  {
+    q: 'What is the cancellation policy?',
+    a: 'Cancellations made less than 45 days before the scheduled arrival date are subject to a 50% cancellation fee. Cancellations made 30 days or less before arrival, and no-shows, are charged the full amount of the reservation. Group bookings of more than 5 rooms have different cancellation policies — please contact reservations for the details.',
+  },
+  {
     q: 'What are the check-in and check-out times?',
     a: `Check-in is from ${site.checkIn} and check-out is by ${site.checkOut}. Late check-out can be requested when you book, subject to availability.`,
   },

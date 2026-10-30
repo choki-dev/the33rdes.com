@@ -45,7 +45,7 @@ const clip = (text: string, max = 158) => {
   return out.trim() || text.slice(0, cut > 0 ? cut : max - 1).replace(/[\s,;:—–-]+$/, '') + '…';
 };
 const description = clip(fullDescription);
-const fullTitle = title ? `${title} | ${site.name}` : `${site.name} — Luxury Boutique Hotel in Thimphu, Bhutan`;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Boutique Hotel in Thimphu, Bhutan`;
 const path = Astro.url.pathname.slice(base.length) || '/';
 const canonical = pageUrl(path);
 const ogImage =

@@ -57,7 +57,7 @@ const callLabel = { dining: 'Call to reserve a table', spa: 'Call to book a trea
   <nav class="pn" aria-label="More experiences">
     {[next, after].map((x) => (
       <a href={`/experiences/${x.slug}`} class="pn__card">
-        <div class="pn__media"><Image src={img(x.hero)} alt="" widths={[700, 1100, 1500]} sizes="(max-width: 760px) 100vw, 50vw" /></div>
+        <div class="pn__media"><Image src={img(x.hero)} alt="" widths={[480, 700, 1100, 1500]} sizes="(max-width: 760px) 100vw, 50vw" /></div>
         <div class="pn__body">
           <span class="pn__label">Next experience <Icon name="arrow" /></span>
           <h2>{x.name}</h2>

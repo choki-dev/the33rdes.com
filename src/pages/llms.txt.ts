@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { experiences, roomAmenities, rooms, site } from '../data/site';
+import { experiences, guestGuidelines, mealPlans, roomAmenities, rooms, site } from '../data/site';
 import { faqs } from '../data/faqs';
 import { experiencePath, pageUrl, roomPath } from '../lib/urls';
 
@@ -19,9 +19,13 @@ ${site.name} is a boutique luxury hotel on ${site.address.full}. Check-in is fro
 - Book: ${pageUrl('/book')}
 
 ## Rooms & Suites
-${rooms.map((r) => `- [${r.name}](${pageUrl(roomPath(r.slug))}): ${r.size}, ${r.bed} bed, up to ${r.capacity} guests, ${r.view}.`).join('\n')}
+${rooms.map((r) => `- [${r.name}](${pageUrl(roomPath(r.slug))}): ${r.size}, ${r.bed} bed, up to ${r.capacity} guests, ${r.view}${r.bathtub ? ', bathtub' : ''}${r.noKitchen ? '' : ', mini kitchen'}.`).join('\n')}
 
-Every room includes: ${roomAmenities.join(', ')}.
+Every room has: ${roomAmenities.filter((a) => a !== 'Mini kitchen & microwave').join(', ')}.
+Every room can be booked ${mealPlans.map((m) => `${m.label.toLowerCase()} (${m.note.toLowerCase()})`).join(' or ')}.
+
+## Guest guidelines
+${guestGuidelines.map((g) => `### ${g.title}\n${g.items.map((it) => `- ${it.replace(/<[^>]+>/g, '')}`).join('\n')}`).join('\n\n')}
 
 ## Dining, Spa & Events
 ${experiences.map((x) => `- [${x.name}](${pageUrl(experiencePath(x.slug))}): ${x.kind}.`).join('\n')}

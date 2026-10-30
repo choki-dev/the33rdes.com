@@ -42,8 +42,9 @@ export const hotel = {
   checkinTime: to24h(site.checkIn),
   checkoutTime: to24h(site.checkOut),
   numberOfRooms: Number(stats[0].value),
+  starRating: { '@type': 'Rating', ratingValue: 4 },
   servesCuisine: ['Vegetarian', 'Vegan', 'Bhutanese'],
-  amenityFeature: ['Spa', 'Rooftop bar', 'Restaurant', 'Vegetarian restaurant', 'Fitness centre', 'Free Wi-Fi', 'Free parking', 'Meeting room', '24-hour room service', 'Airport transfer'].map((name) => ({
+  amenityFeature: ['Spa', 'Rooftop bar', 'Restaurant', 'Vegetarian restaurant', 'Breakfast available', 'Fitness centre', 'Free Wi-Fi', 'Free parking', 'Meeting room', '24-hour room service', 'Laundry service', 'Airport transfer'].map((name) => ({
     '@type': 'LocationFeatureSpecification',
     name,
     value: true,
@@ -55,7 +56,15 @@ export const hotel = {
       url: pageUrl(roomPath(r.slug)),
       description: r.description,
       occupancy: { '@type': 'QuantitativeValue', maxValue: r.capacity },
+      floorSize: { '@type': 'QuantitativeValue', value: parseFloat(r.size), unitCode: 'MTK' },
       bed: r.bed,
+      amenityFeature: [
+        'Rain shower',
+        ...(r.bathtub ? ['Bathtub'] : []),
+        ...(r.noKitchen ? [] : ['Mini kitchen']),
+        r.view,
+        'With or without breakfast',
+      ].map((name) => ({ '@type': 'LocationFeatureSpecification', name, value: true })),
     })),
     ...experiences.map((x) => ({ '@type': 'Place', name: x.name, description: x.kind, url: pageUrl(experiencePath(x.slug)) })),
   ],
