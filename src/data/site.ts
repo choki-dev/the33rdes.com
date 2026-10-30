@@ -27,7 +27,7 @@ export const site = {
   // Booking and enquiry forms post here (Web3Forms). Every request is emailed to the address the access
   // key was created for (reservation@the33rdes.com). The key is public by design, so it is safe here.
   formEndpoint: 'https://api.web3forms.com/submit',
-  formAccessKey: '08d06667-2b05-48de-aed8-217a328858d3',
+  formAccessKey: '80afa3eb-0a51-49bf-9372-dd9684d4f806',
   social: {
     facebook: 'https://www.facebook.com/share/1Cpdm4A9DZ/',
     instagram: 'https://www.instagram.com/the33rdexecutivesuites',
