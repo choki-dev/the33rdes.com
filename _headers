@@ -1,0 +1,4 @@
+# Cloudflare static headers (the adapter appends immutable caching for /_astro/* at build time).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

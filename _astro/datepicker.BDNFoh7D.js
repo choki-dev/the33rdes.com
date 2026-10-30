@@ -1,0 +1,14 @@
+var e=[`January`,`February`,`March`,`April`,`May`,`June`,`July`,`August`,`September`,`October`,`November`,`December`],t=[`Mo`,`Tu`,`We`,`Th`,`Fr`,`Sa`,`Su`],n=e=>`${e.getFullYear()}-${String(e.getMonth()+1).padStart(2,`0`)}-${String(e.getDate()).padStart(2,`0`)}`,r=e=>{let[t,n,r]=e.split(`-`).map(Number);return new Date(t,n-1,r)},i=()=>n(new Date);function a(t){if(!t)return{day:`—`,month:`Select date`,weekday:``};let n=r(t);return{day:String(n.getDate()).padStart(2,`0`),month:`${e[n.getMonth()].slice(0,3)} ${n.getFullYear()}`,weekday:n.toLocaleDateString(`en-GB`,{weekday:`long`})}}function o(e){return r(e).toLocaleDateString(`en-GB`,{weekday:`short`,day:`numeric`,month:`short`,year:`numeric`})}function s({root:a,initial:o,onChange:s,onComplete:c}){let l={...o},u=null,d=i(),f=r(l.start??d),p=f.getFullYear(),m=f.getMonth();a.classList.add(`dp`),a.addEventListener(`click`,e=>e.stopPropagation());function h(i,a){let o=(new Date(i,a,1).getDay()+6)%7,s=new Date(i,a+1,0).getDate(),c=``;for(let e=0;e<o;e++)c+=`<span class="dp__cell dp__cell--empty"></span>`;for(let e=1;e<=s;e++){let t=n(new Date(i,a,e)),o=t<d,s=t===l.start,f=t===l.end,p=l.end??(l.start&&u&&u>l.start?u:null),m=!!(l.start&&p&&t>l.start&&t<p),h=[`dp__cell`,o&&`is-disabled`,s&&`is-start`,(f||!l.end&&t===p)&&`is-end`,m&&`is-in-range`,t===d&&`is-today`].filter(Boolean).join(` `);c+=`<button type="button" class="${h}" data-date="${t}" ${o?`disabled`:``} aria-label="${r(t).toDateString()}">${e}</button>`}return`<div class="dp__month">
+      <div class="dp__title">${e[a]} ${i}</div>
+      <div class="dp__dow">${t.map(e=>`<span>${e}</span>`).join(``)}</div>
+      <div class="dp__grid">${c}</div>
+    </div>`}function g(){let e=new Date(p,m+1,1),t=r(d),n=p===t.getFullYear()&&m===t.getMonth(),i=!l.start||l.end?`Select your arrival date`:`Now select your departure date`;a.innerHTML=`
+      <div class="dp__head">
+        <button type="button" class="dp__nav" data-nav="-1" ${n?`disabled`:``} aria-label="Previous month">&#8592;</button>
+        <span class="dp__hint">${i}</span>
+        <button type="button" class="dp__nav" data-nav="1" aria-label="Next month">&#8594;</button>
+      </div>
+      <div class="dp__months">
+        ${h(p,m)}
+        ${h(e.getFullYear(),e.getMonth())}
+      </div>`}return a.addEventListener(`click`,e=>{let t=e.target,n=t.closest(`[data-nav]`);if(n){let e=new Date(p,m+Number(n.dataset.nav),1);p=e.getFullYear(),m=e.getMonth(),g();return}let r=t.closest(`[data-date]`);if(!r)return;let i=r.dataset.date;l=!l.start||l.end||i<=l.start?{start:i,end:null}:{start:l.start,end:i},s(l),g(),l.start&&l.end&&c?.()}),a.addEventListener(`mouseover`,e=>{let t=e.target.closest(`[data-date]`);t&&l.start&&!l.end&&u!==t.dataset.date&&(u=t.dataset.date,g())}),g(),{set(e){if(l={...e},l.start){let e=r(l.start);p=e.getFullYear(),m=e.getMonth()}g()}}}export{i,o as n,a as r,s as t};
