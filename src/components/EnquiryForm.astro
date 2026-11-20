@@ -52,6 +52,8 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
       <label for={`${kind}-message`}>{kind === 'general' ? 'Message' : 'Special requests'}</label>
       <textarea class="textarea" id={`${kind}-message`} name="message" required={kind === 'general'}></textarea>
     </div>
+    <div class="span-2 captcha" data-captcha></div>
+    <p class="span-2 form-note">We use your details only to reply to your message. This form is protected by hCaptcha.</p>
     <div class="span-2 eform__foot">
       <button class="btn" type="submit">{submitLabel}</button>
       <p class="eform__status" role="status" aria-live="polite" data-status></p>
@@ -64,9 +66,13 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
   .eform__status { margin: 0; font-size: .95rem; }
   .eform__status.is-error { color: #a4473a; }
   .eform__status.is-ok { color: var(--gold-deep); }
+  .captcha:empty { display: none; }
+  .form-note { margin: 0; font-size: .8rem; color: var(--muted); }
 </style>
 
 <script>
+  import { protectForm } from '../lib/spam';
+
   document.querySelectorAll<HTMLInputElement>('[data-min-today]').forEach((el) => {
     const d = new Date();
     el.min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -75,6 +81,12 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
   document.querySelectorAll<HTMLFormElement>('[data-enquiry]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('[data-status]')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const guard = protectForm(form);
+    const thanks = () => {
+      form.reset();
+      status.classList.add('is-ok');
+      status.textContent = 'Thank you — your request has been received. Our team will be in touch shortly.';
+    };
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.className = 'eform__status';
@@ -82,10 +94,19 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
         form.reportValidity();
         return;
       }
+      // Bots get the thank-you message and nothing is sent.
+      if (guard.isBot()) return thanks();
+      const captcha = guard.token();
+      if (captcha === null) {
+        status.classList.add('is-error');
+        status.textContent = 'Please tick “I am human” above, then send again.';
+        return;
+      }
       button.disabled = true;
       status.textContent = 'Sending…';
       try {
-        const { website, kind, venue, ...fields } = Object.fromEntries(new FormData(form)) as Record<string, string>;
+        // hCaptcha adds its own fields to the form; the token is sent once, under the name Web3Forms checks.
+        const { website, kind, venue, 'h-captcha-response': _h, 'g-recaptcha-response': _g, ...fields } = Object.fromEntries(new FormData(form)) as Record<string, string>;
         const titles: Record<string, string> = { general: 'Website enquiry', dining: 'Table reservation request', spa: 'Spa appointment request', event: 'Event enquiry' };
         // Sent by Web3Forms as an email to the reservations address; replies go straight to the guest.
         const res = await fetch(form.dataset.endpoint!, {
@@ -95,7 +116,7 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
             access_key: form.dataset.accessKey,
             subject: `${titles[kind] ?? 'Website enquiry'}${venue ? ` — ${venue}` : ''}`,
             from_name: 'The 33rd Executive Suites website',
-            botcheck: Boolean(website),
+            'h-captcha-response': captcha,
             replyto: fields.email,
             ...(venue ? { Venue: venue } : {}),
             ...fields,
@@ -103,14 +124,13 @@ const guestsLabel = kind === 'event' ? 'Attendees' : 'Guests';
         });
         const data = (await res.json().catch(() => ({}))) as { success?: string | boolean; message?: string };
         if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `HTTP ${res.status}`);
-        form.reset();
-        status.classList.add('is-ok');
-        status.textContent = 'Thank you — your request has been received. Our team will be in touch shortly.';
+        thanks();
       } catch (err) {
         console.warn('Enquiry not sent:', err);
         status.classList.add('is-error');
         status.textContent = 'We could not send your request just now. Please try again, or call or WhatsApp +975 16993333.';
       } finally {
+        guard.reset();
         button.disabled = false;
       }
     });

@@ -489,6 +489,5 @@ export const attractions: {
 export const stats = [
   { value: '68', label: 'Rooms & suites across two towers' },
   { value: '100%', label: 'Vegetarian & vegan-friendly' },
-  { value: '7th', label: 'Floor rooftop bar' },
   { value: '10', label: 'Minutes from Thimphu town' },
 ];

@@ -130,6 +130,8 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
                 <input type="checkbox" name="acceptTerms" required />
                 <span>I understand that this is a reservation request. No payment is taken online — the hotel will confirm availability and send the rate and payment details by email. I have read the <a href="#guide-title">cancellation policy</a>.</span>
               </label>
+              <div class="span-2 captcha" data-captcha></div>
+              <p class="span-2 form-note">We use your details only for this reservation request. This form is protected by hCaptcha.</p>
               <div class="span-2 panel__actions">
                 <button class="btn" type="submit" data-submit>Request reservation</button>
               </div>
@@ -285,12 +287,15 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
   .sum__extras { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; font-size: .86rem; }
   .sum__extras li::before { content: '+ '; color: var(--gold); }
   .sum__note { margin: 18px 0 0; font-size: .78rem; line-height: 1.6; color: #8f887b; }
+  .captcha:empty { display: none; }
+  .form-note { margin: 0; font-size: .8rem; color: var(--muted); }
   .sum__empty { margin: 16px 0 0; font-family: var(--font-display); font-size: var(--fs-detail); color: #a9a294; }
 </style>
 
 <script>
   import { createRangePicker, formatLong, today } from '../lib/datepicker';
   import { validateStay, nightsBetween, type StayInput } from '../lib/stay';
+  import { protectForm } from '../lib/spam';
 
   type Config = {
     rooms: { slug: string; name: string; tagline: string; size: string; bed: string; capacity: number; view: string; highlight: string; thumb: string }[];
@@ -493,6 +498,14 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
 
   // ---------- Step 4: submit ----------
   const form = $<HTMLFormElement>('[data-guest-form]');
+  const guard = protectForm(form);
+  const confirm = (firstName: string, ref: string, email: string) => {
+    $('[data-confirm-name]').textContent = firstName;
+    $('[data-confirm-ref]').textContent = ref;
+    $('[data-confirm-email]').textContent = email;
+    go(5);
+    document.querySelectorAll<HTMLElement>('[data-step-label]').forEach((li) => li.classList.add('is-done'));
+  };
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     showError(null);
@@ -503,6 +516,10 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
     const stayError = validateStay(state);
     if (stayError) return showError(stayError);
     const guest = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    // Bots see a confirmation and nothing is sent.
+    if (guard.isBot()) return confirm(guest.firstName, makeRef(), guest.email);
+    const captcha = guard.token();
+    if (captcha === null) return showError('Please tick “I am human” above the button, then send your request again.');
     const button = $<HTMLButtonElement>('[data-submit]');
     button.disabled = true;
     button.textContent = 'Sending…';
@@ -519,7 +536,7 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
           access_key: cfg.accessKey,
           subject: `New booking request ${ref} — ${room.name}, ${state.checkIn} → ${state.checkOut}`,
           from_name: 'The 33rd Executive Suites website',
-          botcheck: Boolean(guest.website),
+          'h-captcha-response': captcha,
           replyto: guest.email,
           Reference: ref,
           name: fullName,
@@ -540,15 +557,12 @@ const steps = ['Your stay', 'Room', 'Extras', 'Guest details'];
       });
       const data = (await res.json().catch(() => ({}))) as { success?: string | boolean; message?: string };
       if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `HTTP ${res.status}`);
-      $('[data-confirm-name]').textContent = guest.firstName;
-      $('[data-confirm-ref]').textContent = ref;
-      $('[data-confirm-email]').textContent = guest.email;
-      go(5);
-      document.querySelectorAll<HTMLElement>('[data-step-label]').forEach((li) => li.classList.add('is-done'));
+      confirm(guest.firstName, ref, guest.email);
     } catch (err) {
       console.warn('Booking request not sent:', err);
       showError('We could not send your request just now. Please try again, or call or WhatsApp +975 16993333.');
     } finally {
+      guard.reset();
       button.disabled = false;
       button.textContent = 'Request reservation';
     }

@@ -56,6 +56,21 @@ const chapters = [
     ],
   },
   {
+    // Placeholder text and link until the Indian menu PDF arrives.
+    kicker: 'Spice',
+    title: 'Indian Menu',
+    text: [
+      'A celebration of India’s regional kitchens, all pure vegetarian — slow-simmered dals, paneer from the tandoor, fragrant biryanis and freshly made breads, finished with chutneys and sweets prepared in-house each day.',
+    ],
+    meta: `${xp['artisans-table'].location} · ${xp['artisans-table'].hours[1].value}`,
+    image: 'food-thali',
+    inset: 'dining-5',
+    links: [
+      { label: 'View the menu', href: '/experiences/artisans-table#menu' },
+      { label: 'Reserve a table', href: site.phoneHref },
+    ],
+  },
+  {
     kicker: 'Unwind',
     title: 'Salts Rooftop Bar',
     text: [xp['salts-rooftop-bar'].intro],
@@ -118,7 +133,7 @@ const chapters = [
 
     <div class="hero__content">
       <h1 class="hero__title">{site.name}</h1>
-      <p class="hero__tag"><span>A boutique luxury hotel</span><span class="hero__sep" aria-hidden="true">&nbsp;·&nbsp;</span><span>Thimphu, Bhutan</span></p>
+      <p class="hero__tag"><span>A boutique luxury hotel</span></p>
     </div>
 
     <div class="hero__bar container">
@@ -447,9 +462,6 @@ const chapters = [
   @keyframes rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
   @media (max-width: 640px) {
     .hero__tag { font-size: .7rem; letter-spacing: .2em; line-height: 2; }
-    /* Two clean lines instead of a stray dot at a line end. */
-    .hero__tag span { display: block; }
-    .hero__tag .hero__sep { display: none; }
   }
   /* Phones: the bar is full width, so it sits above the quick-action bar and the WhatsApp button instead. */
   @media (max-width: 600px) {
@@ -473,10 +485,9 @@ const chapters = [
   .intro__line p:last-child { margin-bottom: 0; }
   .intro__stats {
     list-style: none; padding: 26px 0 0; margin: 0; width: 100%; max-width: 900px;
-    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 20px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 20px;
     border-top: 1px solid var(--stone);
   }
-  @media (max-width: 600px) { .intro__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .intro__stats li { display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .intro__stats strong { font-family: var(--font-display); font-weight: 400; font-size: 2rem; line-height: 1; color: var(--gold-deep); }
   .intro__stats span { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); max-width: 20ch; }
